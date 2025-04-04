@@ -26,6 +26,17 @@ export default function Home() {
                 </Button>
               </div>
             </div>
+            {/* <div className="hidden md:block">
+              <div className="relative">
+                <div className="absolute -top-6 -left-6 w-24 h-24 bg-yellow-400 rounded-full opacity-70"></div>
+                <img
+                  src="/placeholder.svg?height=400&width=500"
+                  alt="Students learning"
+                  className="rounded-lg shadow-xl relative z-10"
+                />
+                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-blue-500 rounded-full opacity-70"></div>
+              </div>
+            </div> */}
           </div>
         </div>
       </section>
