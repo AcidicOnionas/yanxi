@@ -26,7 +26,6 @@ export default function Navbar() {
             alt="Chinese-Math Academy Logo" 
             className="h-8 w-auto" 
         />
-          <span className="hidden font-bold sm:inline-block">Chinese-Math Academy</span>
         </Link>
 
         <div className="hidden md:flex">
