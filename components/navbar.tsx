@@ -22,7 +22,7 @@ export default function Navbar() {
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
         <img 
-            src="/logo.jpg" 
+            src="/Logo.jpg" 
             alt="Chinese-Math Academy Logo" 
             className="h-8 w-auto" 
         />
