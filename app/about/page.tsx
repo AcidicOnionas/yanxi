@@ -1,175 +1,154 @@
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Code, Palette, Database, Zap, Eye, GitBranch, Bug } from 'lucide-react'
-import { Github, Linkedin, Mail, Twitter } from "lucide-react"
+import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function AboutPage() {
   return (
-    <div className="flex min-h-screen flex-col">
-      <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <div className="grid gap-8 md:grid-cols-2">
-              <div className="flex flex-col justify-center space-y-4">
-                <div className="space-y-2">
-                  <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">About Me</h1>
-                  <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                    Hi, I am a class of 2026 CCA student
-                  </p>
-                </div>
-                <div className="space-y-4 text-gray-500 dark:text-gray-400">
-                  <p>
-                    I have heavy interest in computers and engineering in general. I often spend way too much time researching 
-                    computers and AI
-                  </p>
-                  <p>
-                    I enjoy playing games in my free time
-                  </p>
-                  <p>
-                    This blog is where I share my failureness
-                  </p>
-                </div>
-                <div className="flex gap-4">
-                  {/* <Button asChild variant="outline" size="icon">
-                    <Link href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                      <Twitter className="h-4 w-4" />
-                      <span className="sr-only">Twitter</span>
-                    </Link>
-                  </Button> */}
-                  <Button asChild variant="outline" size="icon">
-                    <Link href="https://github.com/AcidicOnionas" target="_blank" rel="noopener noreferrer">
-                      <Github className="h-4 w-4" />
-                      <span className="sr-only">GitHub</span>
-                    </Link>
-                  </Button>
-                  {/* <Button asChild variant="outline" size="icon">
-                    <Link href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
-                      <Linkedin className="h-4 w-4" />
-                      <span className="sr-only">LinkedIn</span>
-                    </Link>
-                  </Button> */}
-                  {/* <Button asChild variant="outline" size="icon">
-                    <Link href="mailto:hello@example.com">
-                      <Mail className="h-4 w-4" />
-                      <span className="sr-only">Email</span>
-                    </Link>
-                  </Button> */}
-                </div>
-              </div>
-              <div className="flex items-center justify-center">
-                <div className="relative h-[400px] w-[400px] overflow-hidden rounded-full">
-                  <Image
-                    src="/placeholder.svg?height=400&width=400"
-                    alt="Profile picture"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-50 dark:bg-gray-900">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Skills & Expertise</h2>
-                <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                  Here are some of the technologies and tools I work with.
-                </p>
-              </div>
-            </div>
-            <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2 lg:grid-cols-3">
-              {skills.map((skill) => (
-                <Card key={skill.name} className="flex flex-col items-center p-6 text-center">
-                  <div className="rounded-full bg-primary/10 p-3 mb-4">
-                    <skill.icon className="h-8 w-8 text-primary" strokeWidth={1.5} />
-                  </div>
-                  <CardContent className="p-0">
-                    <h3 className="text-xl font-bold">{skill.name}</h3>
-                    <p className="text-gray-500 dark:text-gray-400">{skill.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Get in Touch</h2>
-                <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                  Send me something if you want, preferebly don't send anything.
-                </p>
-              </div>
-              <div className="w-full max-w-sm space-y-2">
-                <Button asChild className="w-full">
-                  <Link href="mailto:chriscao0329@gmail.com">Send me an email</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-      <footer className="w-full border-t py-6">
-        <div className="container flex flex-col items-center justify-center gap-4 px-4 md:px-6 md:flex-row">
-          <p className="text-sm text-gray-500 dark:text-gray-400">© 2025 My Personal Blog. All rights reserved.</p>
-          <nav className="flex gap-4">
-            <Link href="#" className="text-sm text-gray-500 hover:underline dark:text-gray-400">
-              Twitter
-            </Link>
-            <Link href="#" className="text-sm text-gray-500 hover:underline dark:text-gray-400">
-              GitHub
-            </Link>
-            <Link href="#" className="text-sm text-gray-500 hover:underline dark:text-gray-400">
-              LinkedIn
-            </Link>
-          </nav>
+    <div className="container py-12">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4">About Chinese-Math Academy</h1>
+          <p className="text-xl text-gray-600">
+            Pioneering integrated Chinese language and mathematics education since 2010
+          </p>
         </div>
-      </footer>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Our Story</h2>
+            <p className="text-gray-700 mb-4">
+              Chinese-Math Academy was founded by Dr. Li Wei, a mathematics professor and Chinese language enthusiast
+              who recognized the cognitive benefits of learning mathematics in multiple languages.
+            </p>
+            <p className="text-gray-700 mb-4">
+              What began as a small weekend program has grown into a comprehensive educational institution serving
+              hundreds of students across different age groups and proficiency levels.
+            </p>
+            <p className="text-gray-700">
+              Our unique approach integrates Chinese language acquisition with mathematical concepts, creating a
+              powerful synergy that enhances learning in both disciplines.
+            </p>
+          </div>
+          <div className="relative">
+            <div className="absolute -top-4 -left-4 w-20 h-20 bg-red-100 rounded-full"></div>
+            <img
+              src="/placeholder.svg?height=300&width=400"
+              alt="Our campus"
+              className="rounded-lg shadow-lg relative z-10"
+            />
+            <div className="absolute -bottom-4 -right-4 w-20 h-20 bg-blue-100 rounded-full"></div>
+          </div>
+        </div>
+
+        <Separator className="my-16" />
+
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-8">Our Mission & Vision</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="text-xl font-bold mb-4 text-red-600">Our Mission</h3>
+                <p className="text-gray-700">
+                  To provide exceptional education that integrates Chinese language learning with mathematical concepts,
+                  fostering bilingual proficiency and analytical thinking in our students.
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="text-xl font-bold mb-4 text-blue-600">Our Vision</h3>
+                <p className="text-gray-700">
+                  To be the leading institution for integrated Chinese-Mathematics education, recognized for our
+                  innovative curriculum and the outstanding achievements of our students.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-8">Our Educational Philosophy</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="text-xl font-semibold mb-3">Integrated Learning</h3>
+              <p className="text-gray-700">
+                We believe that learning Chinese and mathematics together creates powerful cognitive connections that
+                enhance understanding in both subjects.
+              </p>
+            </div>
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="text-xl font-semibold mb-3">Cultural Context</h3>
+              <p className="text-gray-700">
+                We teach mathematics within the context of Chinese culture and history, providing a rich, meaningful
+                learning experience.
+              </p>
+            </div>
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="text-xl font-semibold mb-3">Practical Application</h3>
+              <p className="text-gray-700">
+                We emphasize real-world applications of mathematical concepts, taught in both Chinese and English.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-8">Meet Our Leadership</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
+                <img
+                  src="/placeholder.svg?height=128&width=128"
+                  alt="Dr. Li Wei"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-xl font-bold">Dr. Li Wei</h3>
+              <p className="text-gray-600">Founder & Academic Director</p>
+            </div>
+            <div className="text-center">
+              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
+                <img
+                  src="/placeholder.svg?height=128&width=128"
+                  alt="Prof. Sarah Chen"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-xl font-bold">Prof. Sarah Chen</h3>
+              <p className="text-gray-600">Chinese Language Director</p>
+            </div>
+            <div className="text-center">
+              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
+                <img
+                  src="/placeholder.svg?height=128&width=128"
+                  alt="Dr. Michael Zhang"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-xl font-bold">Dr. Michael Zhang</h3>
+              <p className="text-gray-600">Mathematics Director</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Join Our Community</h2>
+          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            Experience the benefits of our unique educational approach. Enroll in one of our courses or contact us to
+            learn more.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button asChild size="lg" className="bg-red-600 hover:bg-red-700">
+              <Link href="/courses">Explore Courses</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link href="/contact">Contact Us</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
 
-const skills = [
-  {
-    name: "Frontend Development",
-    icon: Code,
-    description: "React, Next.js, TypeScript, Tailwind CSS",
-  },
-  {
-    name: "UI/UX Design",
-    icon: Palette,
-    description: "Figma, Adobe XD, User Research, Prototyping",
-  },
-  {
-    name: "Backend Development",
-    icon: Database,
-    description: "Node.js, Express, MongoDB, PostgreSQL",
-  },
-  {
-    name: "Performance Optimization",
-    icon: Zap,
-    description: "Lighthouse, Web Vitals, Caching Strategies",
-  },
-  {
-    name: "Accessibility",
-    icon: Eye,
-    description: "WCAG, Semantic HTML, Screen Reader Testing",
-  },
-  {
-    name: "DevOps",
-    icon: GitBranch,
-    description: "CI/CD, Docker, Vercel, AWS",
-  },
-  {
-    name: "Bugging",
-    icon: Bug,
-    description: "I Hate Bugs",
-  },
-]
