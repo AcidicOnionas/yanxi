@@ -7,8 +7,8 @@ import Navbar from "@/components/navbar"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "Chinese-Math Academy",
-  description: "Learn Chinese language and mathematics with our integrated curriculum",
+  title: "言磎精品中文",
+  description: "快乐学习中文",
 }
 
 export default function RootLayout({
