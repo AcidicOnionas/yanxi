@@ -39,7 +39,7 @@ export default function Home() {
             </div> */}
           </div>
         </div>
-      </section>
+      </section>  
 
       {/* Features Section */}
       <section className="py-16 px-4 md:px-6 lg:px-8 bg-white">

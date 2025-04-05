@@ -53,7 +53,7 @@ export default function Navbar() {
                         </a>
                       </NavigationMenuLink>
                     </li>
-                    <ListItem href="/about/team" title="Our Staff">
+                    <ListItem href="/about/test" title="Our Staff">
                       Meet our experienced teachers and staff
                     </ListItem>
                   </ul>
