@@ -48,14 +48,11 @@ export default function Navbar() {
                         >
                           <div className="mt-4 mb-2 text-lg font-medium text-white">欢迎</div>
                           <p className="text-sm leading-tight text-white/90">
-                            点击右边去了解我们。
+                            点击这里去了解我们。
                           </p>
                         </a>
                       </NavigationMenuLink>
                     </li>
-                    <ListItem href="/about/test" title="Our Staff">
-                      Meet our experienced teachers and staff
-                    </ListItem>
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
