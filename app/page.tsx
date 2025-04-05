@@ -42,7 +42,7 @@ export default function Home() {
       </section>  
 
       {/* Features Section */}
-      <section className="py-16 px-4 md:px-6 lg:px-8 bg-white">
+      <section id="features" className="py-16 px-4 md:px-6 lg:px-8 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Why Choose Our Program</h2>
@@ -112,16 +112,16 @@ export default function Home() {
       <section id="courses" className="py-16 px-4 md:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Our Courses</h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold mb-4">课程</h2>
+            {/* <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Explore our range of courses designed for different age groups and proficiency levels
-            </p>
+            </p> */}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <CourseCard
-              title="Chinese Language Fundamentals"
-              description="Master Chinese characters, pronunciation, and basic conversation skills while learning numerical vocabulary and simple math concepts."
+              title="数学和中文"
+              description="快速提升中文和数学"
               level="Beginner"
               duration="12 weeks"
               category="Chinese"
@@ -163,7 +163,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-16 px-4 md:px-6 lg:px-8 bg-white">
+      {/* <section className="py-16 px-4 md:px-6 lg:px-8 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">What Our Students Say</h2>
@@ -192,7 +192,7 @@ export default function Home() {
             />
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Contact Section */}
       <section id="contact" className="py-16 px-4 md:px-6 lg:px-8 bg-gray-50">
