@@ -244,7 +244,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="flex items-start">
+                {/* <div className="flex items-start">
                   <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-4 mt-1">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -266,7 +266,7 @@ export default function Home() {
                         d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                       />
                     </svg>
-                  </div>
+                  </div> */}
                   {/* <div>
                     <h3 className="text-lg font-medium">地点</h3>
                     <p className="text-gray-600">6714 Kenmar Way</p>
