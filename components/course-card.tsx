@@ -7,17 +7,17 @@ interface CourseCardProps {
   description: string
   level: string
   duration: string
-  category: "Chinese" | "Mathematics" | "Combined"
+  category: "语文" | "数学" | "联合"
 }
 
 export default function CourseCard({ title, description, level, duration, category }: CourseCardProps) {
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "Chinese":
+      case "语文":
         return "bg-red-100 text-red-800 hover:bg-red-200"
-      case "Mathematics":
+      case "数学":
         return "bg-blue-100 text-blue-800 hover:bg-blue-200"
-      case "Combined":
+      case "联合":
         return "bg-purple-100 text-purple-800 hover:bg-purple-200"
       default:
         return "bg-gray-100 text-gray-800 hover:bg-gray-200"

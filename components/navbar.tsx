@@ -91,7 +91,7 @@ export default function Navbar() {
 
         <div className="hidden md:block">
           <Button asChild className="bg-red-600 hover:bg-red-700">
-            <Link href="#courses">Enroll Now</Link>
+            <Link href="#courses">点击报名</Link>
           </Button>
         </div>
 
