@@ -53,14 +53,8 @@ export default function Navbar() {
                         </a>
                       </NavigationMenuLink>
                     </li>
-                    <ListItem href="/philosophy" title="Our Philosophy">
-                      Our unique approach to bilingual education
-                    </ListItem>
-                    <ListItem href="/team" title="Our Team">
+                    <ListItem href="/about/team" title="Our Staff">
                       Meet our experienced teachers and staff
-                    </ListItem>
-                    <ListItem href="/facilities" title="Our Facilities">
-                      Tour our modern learning environment
                     </ListItem>
                   </ul>
                 </NavigationMenuContent>
