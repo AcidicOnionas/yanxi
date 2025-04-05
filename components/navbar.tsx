@@ -46,9 +46,9 @@ export default function Navbar() {
                           className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-red-500 to-red-700 p-6 no-underline outline-none focus:shadow-md"
                           href="/about"
                         >
-                          <div className="mt-4 mb-2 text-lg font-medium text-white">Our Story</div>
+                          <div className="mt-4 mb-2 text-lg font-medium text-white">欢迎</div>
                           <p className="text-sm leading-tight text-white/90">
-                            Learn about our mission to integrate Chinese language and mathematics education
+                            点击右边去了解我们。
                           </p>
                         </a>
                       </NavigationMenuLink>
