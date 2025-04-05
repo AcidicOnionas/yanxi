@@ -13,9 +13,9 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="text-white space-y-6">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Master Chinese & Mathematics</h1>
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tight">言蹊精品中文</h1>
               <p className="text-xl opacity-90">
-                Comprehensive dual-discipline courses designed to develop language skills and mathematical thinking
+              快乐学习语文数学！
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button asChild size="lg" className="bg-white text-red-700 hover:bg-gray-100">
@@ -372,9 +372,9 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4">Chinese-Math Academy</h3>
-              <p className="text-gray-400">
-                Empowering students through integrated Chinese language and mathematics education.
+              <h3 className="text-xl font-bold mb-4">言蹊精品中文</h3>
+              <p className="text-gray-400 text-l">
+              快乐学习语文数学！
               </p>
             </div>
 
@@ -396,14 +396,9 @@ export default function Home() {
                     Courses
                   </Link>
                 </li>
-                <li>
-                  <Link href="/teachers" className="text-gray-400 hover:text-white transition-colors">
-                    Our Teachers
-                  </Link>
-                </li>
               </ul>
             </div>
-
+{/* 
             <div>
               <h4 className="text-lg font-semibold mb-4">Resources</h4>
               <ul className="space-y-2">
@@ -428,7 +423,7 @@ export default function Home() {
                   </Link>
                 </li>
               </ul>
-            </div>
+            </div> */}
 
             <div>
               <h4 className="text-lg font-semibold mb-4">Connect With Us</h4>
@@ -465,12 +460,12 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400">© 2024 Chinese-Math Academy. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
+              {/* <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
                 Privacy Policy
               </Link>
               <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
                 Terms of Service
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
