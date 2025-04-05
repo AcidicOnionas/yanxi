@@ -267,10 +267,10 @@ export default function Home() {
                       />
                     </svg>
                   </div>
-                  <div>
+                  {/* <div>
                     <h3 className="text-lg font-medium">地点</h3>
                     <p className="text-gray-600">6714 Kenmar Way</p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
