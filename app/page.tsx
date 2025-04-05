@@ -266,12 +266,12 @@ export default function Home() {
                         d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                       />
                     </svg>
-                  </div> */}
-                  {/* <div>
+                  </div>
+                 <div>
                     <h3 className="text-lg font-medium">地点</h3>
                     <p className="text-gray-600">6714 Kenmar Way</p>
-                  </div> */}
-                </div>
+                  </div>
+                </div> */}
               </div>
             </div>
 
