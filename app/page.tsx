@@ -19,10 +19,10 @@ export default function Home() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button asChild size="lg" className="bg-white text-red-700 hover:bg-gray-100">
-                  <Link href="#courses">Explore Courses</Link>
+                  <Link href="#courses">查看课程</Link>
                 </Button>
                 <Button asChild size="lg" className="border-white text-white hover:bg-gray-10">
-                  <Link href="#contact">Contact Us</Link>
+                  <Link href="#contact">联系我们</Link>
                 </Button>
               </div>
             </div>
@@ -45,7 +45,7 @@ export default function Home() {
       <section id="features" className="py-16 px-4 md:px-6 lg:px-8 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Choose Our Program</h2>
+            <h2 className="text-3xl font-bold mb-4">我们课程的与众不同</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Our unique approach combines Chinese language learning with mathematical concepts for a comprehensive
               educational experience
@@ -122,9 +122,9 @@ export default function Home() {
             <CourseCard
               title="数学和中文"
               description="快速提升中文和数学"
-              level="Beginner"
-              duration="12 weeks"
-              category="Chinese"
+              level="5-6年纪学生"
+              duration="学期期间每周一"
+              category="联合"
             />
 
             <CourseCard
@@ -132,7 +132,7 @@ export default function Home() {
               description="Learn mathematical terminology in Chinese while solving problems. Perfect for students who want to strengthen both subjects simultaneously."
               level="Intermediate"
               duration="10 weeks"
-              category="Combined"
+              category="数学"
             />
 
             <CourseCard
@@ -140,7 +140,7 @@ export default function Home() {
               description="Develop advanced Chinese language skills while tackling algebraic concepts and problem-solving in both languages."
               level="Advanced"
               duration="14 weeks"
-              category="Combined"
+              category="语文"
             />
 
             <CourseCard
@@ -148,7 +148,7 @@ export default function Home() {
               description="Prepare for mathematics competitions with problem-solving strategies taught in both Chinese and English."
               level="Advanced"
               duration="8 weeks"
-              category="Mathematics"
+              category="语文"
             />
           </div>
 
@@ -199,11 +199,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div>
-              <h2 className="text-3xl font-bold mb-6">Get in Touch</h2>
-              <p className="text-lg text-gray-600 mb-8">
-                Have questions about our courses? Want to enroll? Contact us today and our team will be happy to assist
-                you.
-              </p>
+              <h2 className="text-3xl font-bold mb-6">联系我们</h2>
 
               <div className="space-y-4">
                 <div className="flex items-start">
@@ -224,8 +220,8 @@ export default function Home() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium">Phone</h3>
-                    <p className="text-gray-600">(123) 456-7890</p>
+                    <h3 className="text-lg font-medium">电话号码</h3>
+                    <p className="text-gray-600">858-261-8491</p>
                   </div>
                 </div>
 
@@ -247,8 +243,8 @@ export default function Home() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium">Email</h3>
-                    <p className="text-gray-600">info@chinesemath.edu</p>
+                    <h3 className="text-lg font-medium">电子邮箱</h3>
+                    <p className="text-gray-600">chenxuhong1212@icloud.com</p>
                   </div>
                 </div>
 
@@ -276,8 +272,8 @@ export default function Home() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium">Location</h3>
-                    <p className="text-gray-600">123 Education Street, Learning City, LC 12345</p>
+                    <h3 className="text-lg font-medium">地点</h3>
+                    <p className="text-gray-600">6714 Kenmar Way</p>
                   </div>
                 </div>
               </div>
@@ -379,21 +375,21 @@ export default function Home() {
             </div>
 
             <div>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
+              <h4 className="text-lg font-semibold mb-4">链接</h4>
               <ul className="space-y-2">
                 <li>
                   <Link href="/" className="text-gray-400 hover:text-white transition-colors">
-                    Home
+                    主页
                   </Link>
                 </li>
                 <li>
                   <Link href="/about" className="text-gray-400 hover:text-white transition-colors">
-                    About Us
+                    介绍
                   </Link>
                 </li>
                 <li>
                   <Link href="/courses" className="text-gray-400 hover:text-white transition-colors">
-                    Courses
+                    课程
                   </Link>
                 </li>
               </ul>
@@ -458,7 +454,7 @@ export default function Home() {
           <Separator className="my-8 bg-gray-800" />
 
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400">© 2024 Chinese-Math Academy. All rights reserved.</p>
+            <p className="text-gray-400">© 2025 言磎精品中文. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               {/* <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
                 Privacy Policy

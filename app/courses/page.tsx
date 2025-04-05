@@ -30,7 +30,7 @@ export default function CoursesPage() {
               description="Master Chinese characters, pronunciation, and basic conversation skills while learning numerical vocabulary and simple math concepts."
               level="Beginner"
               duration="12 weeks"
-              category="Chinese"
+              category="语文"
             />
 
             <CourseCard
@@ -38,7 +38,7 @@ export default function CoursesPage() {
               description="Learn mathematical terminology in Chinese while solving problems. Perfect for students who want to strengthen both subjects simultaneously."
               level="Intermediate"
               duration="10 weeks"
-              category="Combined"
+              category="联合"
             />
 
             <CourseCard
@@ -46,7 +46,7 @@ export default function CoursesPage() {
               description="Develop advanced Chinese language skills while tackling algebraic concepts and problem-solving in both languages."
               level="Advanced"
               duration="14 weeks"
-              category="Combined"
+              category="联合"
             />
 
             <CourseCard
@@ -54,23 +54,7 @@ export default function CoursesPage() {
               description="Prepare for mathematics competitions with problem-solving strategies taught in both Chinese and English."
               level="Advanced"
               duration="8 weeks"
-              category="Mathematics"
-            />
-
-            <CourseCard
-              title="Elementary Chinese"
-              description="A fun, interactive introduction to Chinese language for young learners, incorporating numbers and basic counting."
-              level="Beginner"
-              duration="8 weeks"
-              category="Chinese"
-            />
-
-            <CourseCard
-              title="Geometry in Chinese"
-              description="Learn geometric concepts and vocabulary in Chinese, enhancing spatial reasoning and language skills simultaneously."
-              level="Intermediate"
-              duration="10 weeks"
-              category="Combined"
+              category="数学"
             />
           </div>
         </TabsContent>
@@ -82,7 +66,7 @@ export default function CoursesPage() {
               description="Master Chinese characters, pronunciation, and basic conversation skills while learning numerical vocabulary and simple math concepts."
               level="Beginner"
               duration="12 weeks"
-              category="Chinese"
+              category="语文"
             />
 
             <CourseCard
@@ -90,7 +74,7 @@ export default function CoursesPage() {
               description="A fun, interactive introduction to Chinese language for young learners, incorporating numbers and basic counting."
               level="Beginner"
               duration="8 weeks"
-              category="Chinese"
+              category="语文"
             />
 
             <CourseCard
@@ -98,7 +82,7 @@ export default function CoursesPage() {
               description="Build fluency through practical conversations, including discussions about quantities, measurements, and everyday math."
               level="Intermediate"
               duration="10 weeks"
-              category="Chinese"
+              category="语文"
             />
           </div>
         </TabsContent>
@@ -110,7 +94,7 @@ export default function CoursesPage() {
               description="Prepare for mathematics competitions with problem-solving strategies taught in both Chinese and English."
               level="Advanced"
               duration="8 weeks"
-              category="Mathematics"
+              category="数学"
             />
 
             <CourseCard
@@ -118,7 +102,7 @@ export default function CoursesPage() {
               description="Build a strong foundation in mathematics with instruction in both Chinese and English."
               level="Beginner"
               duration="10 weeks"
-              category="Mathematics"
+              category="数学"
             />
 
             <CourseCard
@@ -126,7 +110,7 @@ export default function CoursesPage() {
               description="Prepare for algebra with a bilingual approach to mathematical concepts and problem-solving."
               level="Intermediate"
               duration="12 weeks"
-              category="Mathematics"
+              category="数学"
             />
           </div>
         </TabsContent>
@@ -138,7 +122,7 @@ export default function CoursesPage() {
               description="Learn mathematical terminology in Chinese while solving problems. Perfect for students who want to strengthen both subjects simultaneously."
               level="Intermediate"
               duration="10 weeks"
-              category="Combined"
+              category="联合"
             />
 
             <CourseCard
@@ -146,15 +130,7 @@ export default function CoursesPage() {
               description="Develop advanced Chinese language skills while tackling algebraic concepts and problem-solving in both languages."
               level="Advanced"
               duration="14 weeks"
-              category="Combined"
-            />
-
-            <CourseCard
-              title="Geometry in Chinese"
-              description="Learn geometric concepts and vocabulary in Chinese, enhancing spatial reasoning and language skills simultaneously."
-              level="Intermediate"
-              duration="10 weeks"
-              category="Combined"
+              category="联合"
             />
           </div>
         </TabsContent>
