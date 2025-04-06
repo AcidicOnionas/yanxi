@@ -8,9 +8,9 @@ export default function AboutPage() {
     <div className="container py-12">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">About Chinese-Math Academy</h1>
+          <h1 className="text-4xl font-bold mb-4">言磎精品中文</h1>
           <p className="text-xl text-gray-600">
-            Pioneering integrated Chinese language and mathematics education since 2010
+            带着学生快乐学习数学。
           </p>
         </div>
 
@@ -18,8 +18,7 @@ export default function AboutPage() {
           <div>
             <h2 className="text-2xl font-bold mb-4">Our Story</h2>
             <p className="text-gray-700 mb-4">
-              Chinese-Math Academy was founded by Dr. Li Wei, a mathematics professor and Chinese language enthusiast
-              who recognized the cognitive benefits of learning mathematics in multiple languages.
+              Filler
             </p>
             <p className="text-gray-700 mb-4">
               What began as a small weekend program has grown into a comprehensive educational institution serving
