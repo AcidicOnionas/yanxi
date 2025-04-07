@@ -15,17 +15,17 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { UserNav } from "@/components/user-nav"
 
 export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center space-x-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white font-bold">
-            CM
-          </div>
-          <span className="hidden font-bold sm:inline-block">Chinese-Math Academy</span>
+      <div className="container flex h-24 items-center justify-between">
+        <Link href="/" className="flex items-center space-x-2 width">
+        <img 
+            src="/Logo.jpg" 
+            alt="Chinese-Math Academy Logo" 
+            className="h-24 w-auto" 
+        />
         </Link>
 
         <div className="hidden md:flex">
@@ -39,29 +39,20 @@ export default function Navbar() {
               <NavigationMenuItem>
                 <NavigationMenuTrigger>About</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
+                  <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[250px]">
                     <li className="row-span-3">
                       <NavigationMenuLink asChild>
                         <a
                           className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-red-500 to-red-700 p-6 no-underline outline-none focus:shadow-md"
                           href="/about"
                         >
-                          <div className="mt-4 mb-2 text-lg font-medium text-white">Our Story</div>
+                          <div className="mt-4 mb-2 text-lg font-medium text-white">欢迎</div>
                           <p className="text-sm leading-tight text-white/90">
-                            Learn about our mission to integrate Chinese language and mathematics education
+                            点击这里去了解我们。
                           </p>
                         </a>
                       </NavigationMenuLink>
                     </li>
-                    <ListItem href="/philosophy" title="Our Philosophy">
-                      Our unique approach to bilingual education
-                    </ListItem>
-                    <ListItem href="/team" title="Our Team">
-                      Meet our experienced teachers and staff
-                    </ListItem>
-                    <ListItem href="/facilities" title="Our Facilities">
-                      Tour our modern learning environment
-                    </ListItem>
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
@@ -90,11 +81,6 @@ export default function Navbar() {
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/forum" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>Forum</NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
                 <Link href="/contact" legacyBehavior passHref>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>Contact</NavigationMenuLink>
                 </Link>
@@ -104,7 +90,9 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:block">
-          <UserNav />
+          <Button asChild className="bg-red-600 hover:bg-red-700">
+            <Link href="#courses">点击报名</Link>
+          </Button>
         </div>
 
         <Sheet>
@@ -128,15 +116,12 @@ export default function Navbar() {
               <Link href="/resources" className="text-lg font-medium">
                 Resources
               </Link>
-              <Link href="/forum" className="text-lg font-medium">
-                Forum
-              </Link>
               <Link href="/contact" className="text-lg font-medium">
                 Contact
               </Link>
-              <div className="mt-4">
-                <UserNav />
-              </div>
+              <Button asChild className="mt-4 bg-red-600 hover:bg-red-700">
+                <Link href="#courses">Enroll Now</Link>
+              </Button>
             </nav>
           </SheetContent>
         </Sheet>
@@ -167,4 +152,3 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWit
   },
 )
 ListItem.displayName = "ListItem"
-
