@@ -10,6 +10,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata = {
   title: "言磎精品中文",
   description: "快乐学习中文",
+  viewport: "width=device-width, initial-scale=1, shrink-to-fit=no"
 }
 
 export default function RootLayout({
@@ -22,8 +23,8 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <Navbar />
-              {children}
-            <Analytics />
+            {children}
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>
