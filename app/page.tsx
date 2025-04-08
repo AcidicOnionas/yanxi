@@ -53,7 +53,7 @@ export default function Home() {
               <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
                 <Languages className="w-6 h-6 text-red-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">双语教学</h3>
+              <h3 className="text-xl font-semibold mb-2">Multilanguage learning</h3>
               <p className="text-gray-600">
                 可以由英语和中文教导。
               </p>
