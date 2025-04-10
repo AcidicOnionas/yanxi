@@ -24,11 +24,12 @@ const ClientSideNavbar = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="relative h-8 w-8 bg-red-100 rounded-full flex items-center justify-center">
-              <span className="text-red-600 font-bold">C</span>
-            </div>
-            <span className="font-bold">Chinese Academy</span>
+          <Link href="/" className="flex items-center space-x-2 width">
+          <img 
+              src="/Logo.jpg" 
+              alt="Chinese-Math Academy Logo" 
+              className="h-24 w-auto" 
+          />
           </Link>
 
           <div className="hidden md:flex">
