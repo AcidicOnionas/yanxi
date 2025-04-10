@@ -43,29 +43,17 @@ const ClientSideNavbar = () => {
                 <NavigationMenuItem>
                   <NavigationMenuTrigger>About</NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
+                    <ul className="grid gap-3 p-6 md:w-[300px] lg:w-[230px]">
                       <li className="row-span-3">
                         <NavigationMenuLink asChild>
                           <a
                             className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-red-500 to-red-700 p-6 no-underline outline-none focus:shadow-md"
                             href="/about"
                           >
-                            <div className="mt-4 mb-2 text-lg font-medium text-white">Our Story</div>
-                            <p className="text-sm leading-tight text-white/90">
-                              Learn about our mission to integrate Chinese language and mathematics education
-                            </p>
+                            <div className="mt-4 mb-2 text-lg font-medium text-white">点击了解我们</div>
                           </a>
                         </NavigationMenuLink>
                       </li>
-                      <ListItem href="/philosophy" title="Our Philosophy">
-                        Our unique approach to bilingual education
-                      </ListItem>
-                      <ListItem href="/team" title="Our Team">
-                        Meet our experienced teachers and staff
-                      </ListItem>
-                      <ListItem href="/facilities" title="Our Facilities">
-                        Tour our modern learning environment
-                      </ListItem>
                     </ul>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
