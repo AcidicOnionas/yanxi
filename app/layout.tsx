@@ -8,7 +8,7 @@ import Footer from "@/components/footer" // ADDED: Import Footer component
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "Chinese Academy",
+  title: "言蹊精品中文",
   description: "Learn Chinese language and mathematics with our integrated curriculum",
   favicon: {
     icon: "/favicon.jpg"
