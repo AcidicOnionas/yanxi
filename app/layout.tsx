@@ -10,6 +10,9 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata = {
   title: "Chinese Academy",
   description: "Learn Chinese language and mathematics with our integrated curriculum",
+  favicon: {
+    icon: "/favicon.jpg"
+  }
 }
 
 export default function RootLayout({
