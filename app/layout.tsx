@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata = {
   title: "言蹊精品中文",
   description: "Learn Chinese language and mathematics with our integrated curriculum",
-  favicon: {
+  icons: {
     icon: "/favicon.jpg"
   }
 }
