@@ -53,16 +53,9 @@ const ClientSideNavbar = () => {
                   <NavigationMenuTrigger>About</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid gap-3 p-6 md:w-[300px] lg:w-[230px]">
-                      <li className="row-span-3">
-                        <NavigationMenuLink asChild>
-                          <a
-                            className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-red-500 to-red-700 p-6 no-underline outline-none focus:shadow-md"
-                            href="/about"
-                          >
-                            <div className="mt-4 mb-2 text-lg font-medium text-white">点击了解我们</div>
-                          </a>
-                        </NavigationMenuLink>
-                      </li>
+                      <ListItem href="/about" title="About Us">
+                        Click here to learn more about us
+                      </ListItem>
                     </ul>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
