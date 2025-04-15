@@ -35,6 +35,10 @@ export default function Dashboard() {
   // Debug data
   const [debugInfo, setDebugInfo] = useState<DebugInfo>({});
 
+  // Add state for account deletion
+  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [deletionError, setDeletionError] = useState<string | null>(null);
+
   // Check if we have a valid session and user
   useEffect(() => {
     if (!session) {
@@ -286,24 +290,40 @@ export default function Dashboard() {
 
   // Add function to handle account deletion
   const handleDeleteAccount = async () => {
-    if (!confirm("Are you sure you want to delete your account? This will permanently delete all your uploaded documents and your account information. This action cannot be undone.")) {
+    // Clear any previous errors
+    setDeletionError(null);
+    
+    // Ask for confirmation with a more detailed message
+    if (!confirm("WARNING: Are you sure you want to delete your account?\n\nThis will PERMANENTLY delete:\n- Your account information\n- All your uploaded documents\n- Access to any saved feedback\n\nThis action CANNOT be undone.")) {
       return;
     }
+    
+    // Double-check with a second confirmation
+    if (!confirm("Please confirm once more: do you really want to permanently delete your account?")) {
+      return;
+    }
+    
+    setDeletingAccount(true);
     
     try {
       const { error } = await deleteAccount();
       
       if (error) {
         console.error('Error deleting account:', error);
+        setDeletionError(`Failed to delete account: ${error.message}`);
         toast.error(`Failed to delete account: ${error.message}`);
+        setDeletingAccount(false);
         return;
       }
       
       toast.success("Your account has been successfully deleted");
+      // No need to reset state as we're navigating away
       router.push("/");
     } catch (error: any) {
       console.error('Error in handleDeleteAccount:', error);
+      setDeletionError(`An unexpected error occurred: ${error.message}`);
       toast.error(`An unexpected error occurred: ${error.message}`);
+      setDeletingAccount(false);
     }
   };
 
@@ -482,17 +502,39 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                   Once you delete your account, all your personal information and uploads will be permanently removed from our system. This action cannot be undone.
                 </p>
+                {deletionError && (
+                  <div className="p-3 mb-4 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded-md">
+                    <p className="text-sm font-medium">{deletionError}</p>
+                  </div>
+                )}
                 <Button
                   variant="destructive"
                   onClick={handleDeleteAccount}
+                  disabled={deletingAccount}
                   className="w-full"
                 >
-                  Delete My Account
+                  {deletingAccount ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Deleting Account...
+                    </>
+                  ) : (
+                    "Delete My Account"
+                  )}
                 </Button>
               </CardContent>
             </Card>
           </div>
           
+          <div className="mt-8 max-w-lg mx-auto">
+            <details className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md">
+              <summary className="cursor-pointer font-medium">Debug Information</summary>
+              <pre className="mt-2 text-xs overflow-auto">{JSON.stringify(debugInfo, null, 2)}</pre>
+            </details>
+          </div>
         </>
       )}
     </div>

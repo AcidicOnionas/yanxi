@@ -191,53 +191,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error: new Error('Cannot delete the teacher account') };
       }
 
-      // Get the user's documents
-      const { data: documents, error: fetchError } = await supabase
-        .from('documents')
-        .select('file_path')
-        .eq('user_id', user?.id);
-
-      if (fetchError) {
-        console.error('Error fetching user documents:', fetchError);
-        return { error: fetchError };
-      }
-
-      // Delete all the user's files from storage
-      if (documents && documents.length > 0) {
-        const filePaths = documents.map(doc => doc.file_path);
-        const { error: storageError } = await supabase.storage
-          .from('documents')
-          .remove(filePaths);
-
-        if (storageError) {
-          console.error('Error deleting user files:', storageError);
-          return { error: storageError };
+      // Call our API endpoint to delete the account
+      const response = await fetch('/api/delete-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         }
-      }
-
-      // Delete all the user's document records
-      const { error: docDeleteError } = await supabase
-        .from('documents')
-        .delete()
-        .eq('user_id', user?.id);
-
-      if (docDeleteError) {
-        console.error('Error deleting document records:', docDeleteError);
-        return { error: docDeleteError };
-      }
-      
-      // Delete the user's account using the current session
-      // The user will need to be logged in to delete their account
-      const { error: deleteError } = await supabase.auth.updateUser({
-        data: { deleted: true }
       });
 
-      if (deleteError) {
-        console.error('Error marking user account as deleted:', deleteError);
-        return { error: deleteError };
+      // Handle API response
+      const result = await response.json();
+      
+      if (!response.ok) {
+        console.error('Error deleting account:', result.error);
+        return { error: new Error(result.error || 'Failed to delete account') };
+      }
+      
+      // If there was a warning but still success, log it
+      if (result.warning) {
+        console.warn('Warning during account deletion:', result.warning);
       }
 
-      // Sign out after deletion
+      // Sign out after successful deletion
       await signOut();
       return { error: null };
     } catch (error) {
