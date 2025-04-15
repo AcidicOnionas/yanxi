@@ -60,23 +60,9 @@ const ClientSideNavbar = () => {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger>Courses</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                      <ListItem href="/courses/chinese" title="Chinese Language">
-                        From beginner to advanced Chinese language courses
-                      </ListItem>
-                      <ListItem href="/courses/mathematics" title="Mathematics">
-                        Age-appropriate mathematics courses in Chinese and English
-                      </ListItem>
-                      <ListItem href="/courses/combined" title="Combined Programs">
-                        Integrated courses teaching both subjects simultaneously
-                      </ListItem>
-                      <ListItem href="/courses/summer" title="Summer Intensives">
-                        Accelerated learning during school breaks
-                      </ListItem>
-                    </ul>
-                  </NavigationMenuContent>
+                  <Link href="/courses" legacyBehavior passHref>
+                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>Resources</NavigationMenuLink>
+                  </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <Link href="/resources" legacyBehavior passHref>
