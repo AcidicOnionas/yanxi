@@ -106,7 +106,7 @@ function LoginForm() {
             </p>
           </div>
           
-          <div className="border-t pt-4 mt-4">
+          {/* <div className="border-t pt-4 mt-4">
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
               Teacher login information:
             </p>
@@ -120,7 +120,7 @@ function LoginForm() {
                 </Button>
               </Link>
             </div>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>
