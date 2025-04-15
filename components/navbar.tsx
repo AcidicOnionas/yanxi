@@ -172,9 +172,9 @@ const ServerFallback = () => (
       <div className="flex h-16 items-center justify-between">
         <div className="flex items-center space-x-2">
           <div className="h-8 w-8 bg-red-100 rounded-full flex items-center justify-center">
-            <span className="text-red-600 font-bold">C</span>
+            <span className="text-red-600 font-bold">言</span>
           </div>
-          <span className="font-bold">Chinese Academy</span>
+          <span className="font-bold">言蹊精品中文</span>
         </div>
         <div className="w-8 h-8"></div>
       </div>
