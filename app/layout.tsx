@@ -6,6 +6,7 @@ import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { AuthProvider } from "@/lib/auth-context"
 import { Toaster } from "sonner"
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -32,7 +33,8 @@ export default function RootLayout({
           <AuthProvider>
             <div className="flex min-h-screen flex-col w-full">
               <Navbar />
-              <main className="flex-1 w-full">{children}</main>
+                <main className="flex-1 w-full">{children}</main>
+                <Analytics />
               <Footer />
             </div>
             <Toaster />
