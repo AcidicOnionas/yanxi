@@ -142,6 +142,9 @@ export default function SignupPage() {
                 Log in
               </Link>
             </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Note: If you have made an account before, you will not recieve a verification email.
+            </p>
           </div>
         </form>
       </div>
