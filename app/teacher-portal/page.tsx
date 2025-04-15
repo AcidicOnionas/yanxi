@@ -398,13 +398,7 @@ export default function TeacherPortal() {
           </CardHeader>
           <CardContent>
             <p className="mb-4">{error}</p>
-            <p className="text-sm text-gray-500 mb-6">
-              This may be due to missing database tables or incorrect setup. Please follow the Supabase setup instructions.
-            </p>
             <div className="space-y-2">
-              <Link href="/debug">
-                <Button variant="outline" className="w-full">View Debug Information</Button>
-              </Link>
               <Link href="/">
                 <Button variant="outline" className="w-full">Return to Home</Button>
               </Link>

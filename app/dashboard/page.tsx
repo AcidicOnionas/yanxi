@@ -590,12 +590,6 @@ export default function Dashboard() {
             </Card>
           </div>
           
-          <div className="mt-8 max-w-lg mx-auto">
-            <details className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md">
-              <summary className="cursor-pointer font-medium">Debug Information</summary>
-              <pre className="mt-2 text-xs overflow-auto">{JSON.stringify(debugInfo, null, 2)}</pre>
-            </details>
-          </div>
         </>
       )}
     </div>
