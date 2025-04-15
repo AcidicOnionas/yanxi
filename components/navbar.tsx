@@ -83,11 +83,7 @@ const ClientSideNavbar = () => {
                     <NavigationMenuLink className={navigationMenuTriggerStyle()}>Resources</NavigationMenuLink>
                   </Link>
                 </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link href="/contact" legacyBehavior passHref>
-                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>Contact</NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
+                
                 
                 {/* Show dashboard link based on user role */}
                 {user && (
