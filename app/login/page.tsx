@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
-export default function LoginPage() {
+// Create a client component that uses useSearchParams
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get("redirectedFrom") || "/dashboard";
@@ -123,5 +124,20 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+// Wrap with Suspense in the default export
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="container flex items-center justify-center min-h-[80vh]">
+        <div className="w-full max-w-md p-8 text-center">
+          Loading...
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 } 
