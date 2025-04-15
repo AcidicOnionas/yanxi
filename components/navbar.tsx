@@ -52,7 +52,7 @@ const ClientSideNavbar = () => {
                 <NavigationMenuItem>
                   <NavigationMenuTrigger>About</NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="grid gap-3 p-6 md:w-[300px] lg:w-[230px]">
+                    <ul className="grid gap-3 p-4 md:w-[300px] lg:w-[230px]">
                       <ListItem href="/about" title="About Us">
                         Click here to learn more about us
                       </ListItem>
