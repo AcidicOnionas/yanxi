@@ -48,8 +48,8 @@ export default function SignupPage() {
         return;
       }
       
-      toast.success("Account created successfully! Please check your email for verification.");
-      router.push("/dashboard");
+      // Navigate to verification page with email info
+      router.push(`/verification?email=${encodeURIComponent(email)}`);
     } catch (error: any) {
       toast.error("An unexpected error occurred: " + error.message);
       setLoading(false);
@@ -141,9 +141,6 @@ export default function SignupPage() {
               >
                 Log in
               </Link>
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Note: If you have made an account before and your credentials did not change, you will not recieve a verification email.
             </p>
           </div>
         </form>

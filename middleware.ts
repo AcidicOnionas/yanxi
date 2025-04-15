@@ -13,11 +13,11 @@ export async function middleware(req: NextRequest) {
   // Define protected routes that require authentication
   const protectedRoutes = ['/dashboard', '/upload', '/teacher-portal'];
   const authRoutes = ['/login', '/signup'];
-  const debugRoutes = ['/debug'];
+  const publicRoutes = ['/verification', '/debug', '/test-storage'];
   const path = req.nextUrl.pathname;
 
-  // Always allow access to debug routes
-  if (debugRoutes.some(route => path.startsWith(route))) {
+  // Always allow access to public routes
+  if (publicRoutes.some(route => path.startsWith(route))) {
     return res;
   }
 
@@ -53,8 +53,10 @@ export const config = {
     // Auth routes
     '/login',
     '/signup',
-    // Debug routes
+    // Public routes that need session handling
+    '/verification',
     '/debug',
+    '/test-storage',
     // Create teacher account route
     '/create-teacher',
   ],

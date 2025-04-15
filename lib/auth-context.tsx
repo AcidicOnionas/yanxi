@@ -116,17 +116,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     
     // Otherwise, try normal sign in (student)
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     
-    if (!error) {
-      setRole('student');
+    if (error) {
+      setLoading(false);
+      return { error };
     }
     
+    // Check if email is confirmed
+    if (data?.user && !data.user.email_confirmed_at) {
+      setLoading(false);
+      return { 
+        error: new Error('Please verify your email before logging in. Check your inbox for a verification link.') 
+      };
+    }
+    
+    setRole('student');
     setLoading(false);
-    return { error };
+    return { error: null };
   };
 
   const signUp = async (email: string, password: string, name: string) => {

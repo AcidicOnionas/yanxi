@@ -19,6 +19,7 @@ interface DebugInfo {
   userEmail?: string;
   role?: string | null;
   documentsFound?: number;
+  emailVerified?: boolean;
   [key: string]: any; // Allow additional properties
 }
 
@@ -48,6 +49,13 @@ export default function Dashboard() {
       return;
     }
 
+    // Check if email is verified
+    if (user && !user.email_confirmed_at && role === 'student') {
+      setError("Your email address has not been verified. Please check your inbox for a verification link.");
+      setLoading(false);
+      return;
+    }
+
     // Update debug info
     setDebugInfo({
       hasSession: !!session,
@@ -55,6 +63,7 @@ export default function Dashboard() {
       userId: user?.id,
       userEmail: user?.email,
       role,
+      emailVerified: !!user.email_confirmed_at
     });
 
     // Redirect teacher to teacher-portal
@@ -302,38 +311,12 @@ export default function Dashboard() {
     return null; // This will be redirected anyway
   }
 
-  if (error) {
+  if (loading) {
     return (
       <div className="container py-10">
-        <Card className="max-w-lg mx-auto">
-          <CardHeader>
-            <CardTitle className="text-red-600">Error Loading Dashboard</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4">{error}</p>
-            <p className="text-sm text-gray-500 mb-6">
-              This may be due to missing database tables or incorrect setup. Please follow the Supabase setup instructions.
-            </p>
-            <div className="space-y-2">
-              <Link href="/debug">
-                <Button variant="outline" className="w-full">View Debug Information</Button>
-              </Link>
-              <Link href="/">
-                <Button variant="outline" className="w-full">Return to Home</Button>
-              </Link>
-              <Link href="/login">
-                <Button className="w-full">Try Logging In Again</Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Debug information */}
-        <div className="mt-8 max-w-lg mx-auto">
-          <details className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md">
-            <summary className="cursor-pointer font-medium">Debug Information</summary>
-            <pre className="mt-2 text-xs overflow-auto">{JSON.stringify(debugInfo, null, 2)}</pre>
-          </details>
+        <h1 className="text-3xl font-bold mb-6">Student Dashboard</h1>
+        <div className="flex justify-center items-center min-h-[300px]">
+          <p>Loading your dashboard...</p>
         </div>
       </div>
     );
@@ -343,148 +326,181 @@ export default function Dashboard() {
     <div className="container py-10">
       <h1 className="text-3xl font-bold mb-6">Student Dashboard</h1>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <Card>
+      {error ? (
+        <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Upload Document</CardTitle>
-            <CardDescription>
-              Upload PDF or PNG files to share with your teacher.
-            </CardDescription>
+            <CardTitle className="text-red-600">Error</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="file">Select File (PDF or PNG only, max 10MB)</Label>
-                <Input 
-                  id="file" 
-                  type="file" 
-                  onChange={handleFileChange}
-                  accept=".pdf,.png"
-                  required
-                  className="mt-1"
-                />
-              </div>
-              
-              {file && (
-                <div className="p-3 bg-slate-100 dark:bg-slate-800 rounded-md">
-                  <p className="text-sm font-medium">Selected file:</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{file.name}</p>
-                </div>
-              )}
-            </form>
-          </CardContent>
-          <CardFooter>
-            <Button 
-              onClick={handleSubmit}
-              disabled={!file || uploading}
-              className="w-full"
-            >
-              {uploading ? "Uploading..." : "Upload Document"}
-            </Button>
-          </CardFooter>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Your Documents</CardTitle>
-            <CardDescription>
-              View and manage your uploaded documents.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="max-h-[400px] overflow-y-auto">
-            {loading ? (
-              <div className="flex justify-center items-center h-40">
-                <p>Loading documents...</p>
-              </div>
-            ) : error ? (
-              <div className="flex justify-center items-center h-40 text-center text-red-500">
-                <p>{error}</p>
-              </div>
-            ) : documents.length === 0 ? (
-              <div className="flex justify-center items-center h-40 text-center text-gray-500">
-                <p>No documents uploaded yet.</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {documents.map((doc) => (
-                  <div 
-                    key={doc.id} 
-                    className={`p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${doc.uploaded_by_teacher ? 'border-blue-300 bg-blue-50 dark:bg-blue-900/20' : ''}`}
+            <p className="text-red-600">{error}</p>
+            
+            {error.includes("email address has not been verified") && (
+              <div className="mt-4 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-md">
+                <h3 className="font-medium text-amber-800 dark:text-amber-300 mb-2">What to do next:</h3>
+                <ol className="list-decimal list-inside space-y-1 text-amber-700 dark:text-amber-400">
+                  <li>Check your email inbox for a verification link from Supabase</li>
+                  <li>Check your spam/junk folder if you can't find it</li>
+                  <li>Click the verification link in the email</li>
+                  <li>After verification, return here and refresh the page</li>
+                </ol>
+                <div className="mt-4">
+                  <Button 
+                    onClick={() => router.push('/login')}
+                    variant="outline" 
+                    className="mr-2"
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                      <div className="truncate">
-                        <div className="flex items-center gap-1">
-                          <p className="font-medium truncate">{doc.file_name}</p>
-                          {doc.uploaded_by_teacher && (
-                            <span className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 text-xs px-2 py-0.5 rounded-full">
-                              Teacher Feedback
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {new Date(doc.created_at).toLocaleString()}
-                        </p>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <a 
-                          href={doc.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-sm font-medium text-primary hover:underline"
-                        >
-                          View
-                        </a>
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => handleDeleteDocument(doc.id, doc.file_path)}
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                    Return to Login
+                  </Button>
+                  <Button 
+                    onClick={() => window.location.reload()}
+                  >
+                    Refresh Page
+                  </Button>
+                </div>
               </div>
             )}
           </CardContent>
         </Card>
-      </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Upload Document</CardTitle>
+                <CardDescription>
+                  Upload PDF or PNG files to share with your teacher.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <Label htmlFor="file">Select File (PDF or PNG only, max 10MB)</Label>
+                    <Input 
+                      id="file" 
+                      type="file" 
+                      onChange={handleFileChange}
+                      accept=".pdf,.png"
+                      required
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  {file && (
+                    <div className="p-3 bg-slate-100 dark:bg-slate-800 rounded-md">
+                      <p className="text-sm font-medium">Selected file:</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{file.name}</p>
+                    </div>
+                  )}
+                </form>
+              </CardContent>
+              <CardFooter>
+                <Button 
+                  onClick={handleSubmit}
+                  disabled={!file || uploading}
+                  className="w-full"
+                >
+                  {uploading ? "Uploading..." : "Upload Document"}
+                </Button>
+              </CardFooter>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Your Documents</CardTitle>
+                <CardDescription>
+                  View and manage your uploaded documents.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="max-h-[400px] overflow-y-auto">
+                {loading ? (
+                  <div className="flex justify-center items-center h-40">
+                    <p>Loading documents...</p>
+                  </div>
+                ) : documents.length === 0 ? (
+                  <div className="flex justify-center items-center h-40 text-center text-gray-500">
+                    <p>No documents uploaded yet.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {documents.map((doc) => (
+                      <div 
+                        key={doc.id} 
+                        className={`p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${doc.uploaded_by_teacher ? 'border-blue-300 bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <div className="truncate">
+                            <div className="flex items-center gap-1">
+                              <p className="font-medium truncate">{doc.file_name}</p>
+                              {doc.uploaded_by_teacher && (
+                                <span className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 text-xs px-2 py-0.5 rounded-full">
+                                  Teacher Feedback
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {new Date(doc.created_at).toLocaleString()}
+                            </p>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2">
+                            <a 
+                              href={doc.url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-sm font-medium text-primary hover:underline"
+                            >
+                              View
+                            </a>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => handleDeleteDocument(doc.id, doc.file_path)}
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
 
-      {/* Account Management Section */}
-      <div className="mt-12 border-t pt-8">
-        <h2 className="text-2xl font-semibold mb-4">Account Management</h2>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-red-600">Delete Account</CardTitle>
-            <CardDescription>
-              This action will permanently delete your account and all uploaded documents.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Once you delete your account, all your personal information and uploads will be permanently removed from our system. This action cannot be undone.
-            </p>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteAccount}
-              className="w-full"
-            >
-              Delete My Account
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-      
-      {/* Debug section */}
-      <div className="mt-8 max-w-lg mx-auto">
-        <details className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md">
-          <summary className="cursor-pointer font-medium">Debug Information</summary>
-          <pre className="mt-2 text-xs overflow-auto">{JSON.stringify(debugInfo, null, 2)}</pre>
-        </details>
-      </div>
+          <div className="mt-12 border-t pt-8">
+            <h2 className="text-2xl font-semibold mb-4">Account Management</h2>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-red-600">Delete Account</CardTitle>
+                <CardDescription>
+                  This action will permanently delete your account and all uploaded documents.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  Once you delete your account, all your personal information and uploads will be permanently removed from our system. This action cannot be undone.
+                </p>
+                <Button
+                  variant="destructive"
+                  onClick={handleDeleteAccount}
+                  className="w-full"
+                >
+                  Delete My Account
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="mt-8 max-w-lg mx-auto">
+            <details className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md">
+              <summary className="cursor-pointer font-medium">Debug Information</summary>
+              <pre className="mt-2 text-xs overflow-auto">{JSON.stringify(debugInfo, null, 2)}</pre>
+            </details>
+          </div>
+        </>
+      )}
     </div>
   );
 } 
