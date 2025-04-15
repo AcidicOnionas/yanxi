@@ -143,7 +143,7 @@ export default function CoursesPage() {
           learning style.
         </p>
         <Button asChild size="lg" className="bg-red-600 hover:bg-red-700">
-          <a href="#contact">Schedule a Consultation</a>
+          <a href="/#contact">Schedule a Consultation</a>
         </Button>
       </div>
     </div>
