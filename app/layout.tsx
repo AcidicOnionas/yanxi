@@ -3,7 +3,9 @@ import "@/app/globals.css"
 import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import Navbar from "@/components/navbar"
-import Footer from "@/components/footer" // ADDED: Import Footer component
+import Footer from "@/components/footer"
+import { AuthProvider } from "@/lib/auth-context"
+import { Toaster } from "sonner"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -27,11 +29,14 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} overflow-x-hidden w-full`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
-          <div className="flex min-h-screen flex-col w-full">
-            <Navbar />
-            <main className="flex-1 w-full">{children}</main>
-            <Footer /> {/* ADDED: Footer component to layout */}
-          </div>
+          <AuthProvider>
+            <div className="flex min-h-screen flex-col w-full">
+              <Navbar />
+              <main className="flex-1 w-full">{children}</main>
+              <Footer />
+            </div>
+            <Toaster />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -98,7 +98,20 @@
   padding-left: 1rem;
   padding-right: 1rem;
 }
+.container-tight {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
 
+@media (max-width: 480px) {
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
 @media (min-width: 640px) {
   .container {
     max-width: 640px;
@@ -132,7 +145,6 @@
     max-width: 1536px;
   }
 }
-
 /* ADDED: Hero section styles to match screenshot */
 .hero-section {
   background-color: #e53e3e;

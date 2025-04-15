@@ -17,14 +17,11 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
           <div>
             <h2 className="text-2xl font-bold mb-4">Our Story</h2>
-            <p className="text-gray-700 mb-4">
-              Filler
-            </p>
-            <p className="text-gray-700 mb-4">
+            <p className="text-xl text-gray-700 mb-4">
               What began as a small weekend program has grown into a comprehensive educational institution serving
               hundreds of students across different age groups and proficiency levels.
             </p>
-            <p className="text-gray-700">
+            <p className="text-gray-700 text-2xl">
               Our unique approach integrates Chinese language acquisition with mathematical concepts, creating a
               powerful synergy that enhances learning in both disciplines.
             </p>
@@ -47,7 +44,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <Card>
               <CardContent className="pt-6">
-                <h3 className="text-xl font-bold mb-4 text-red-600">Our Mission</h3>
+                <h3 className="text-2xl font-bold mb-4 text-red-600">Our Mission</h3>
                 <p className="text-gray-700">
                   To provide exceptional education that integrates Chinese language learning with mathematical concepts,
                   fostering bilingual proficiency and analytical thinking in our students.
@@ -56,7 +53,7 @@ export default function AboutPage() {
             </Card>
             <Card>
               <CardContent className="pt-6">
-                <h3 className="text-xl font-bold mb-4 text-blue-600">Our Vision</h3>
+                <h3 className="text-2xl font-bold mb-4 text-blue-600">Our Vision</h3>
                 <p className="text-gray-700">
                   To be the leading institution for integrated Chinese-Mathematics education, recognized for our
                   innovative curriculum and the outstanding achievements of our students.

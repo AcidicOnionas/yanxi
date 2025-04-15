@@ -13,13 +13,22 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu } from "lucide-react"
+import { Menu, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
+import { useAuth } from "@/lib/auth-context"
+import { toast } from "sonner"
 
 // Create a client-side only component to avoid hydration issues
 const ClientSideNavbar = () => {
+  const { user, role, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Logged out successfully");
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">
@@ -86,11 +95,42 @@ const ClientSideNavbar = () => {
                     <NavigationMenuLink className={navigationMenuTriggerStyle()}>Contact</NavigationMenuLink>
                   </Link>
                 </NavigationMenuItem>
+                
+                {/* Show dashboard link based on user role */}
+                {user && (
+                  <NavigationMenuItem>
+                    <Link 
+                      href={role === 'teacher' ? '/teacher-portal' : '/dashboard'} 
+                      legacyBehavior 
+                      passHref
+                    >
+                      <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                        {role === 'teacher' ? 'Teacher Portal' : 'Dashboard'}
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+                )}
               </NavigationMenuList>
             </NavigationMenu>
           </div>
 
-          <Button className="bg-red-600 hover:bg-red-700">点击报名</Button>
+          <div className="flex items-center gap-4">
+            {user ? (
+              <Button onClick={handleSignOut} variant="outline" className="flex items-center gap-2">
+                <LogOut className="h-4 w-4" />
+                <span>Log Out</span>
+              </Button>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="outline">Log In</Button>
+                </Link>
+                <Link href="/signup">
+                  <Button>Sign Up</Button>
+                </Link>
+              </>
+            )}
+          </div>
 
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
@@ -116,6 +156,31 @@ const ClientSideNavbar = () => {
                 <Link href="/contact" className="text-lg font-medium">
                   Contact
                 </Link>
+                {user ? (
+                  <>
+                    <Link 
+                      href={role === 'teacher' ? '/teacher-portal' : '/dashboard'} 
+                      className="text-lg font-medium"
+                    >
+                      {role === 'teacher' ? 'Teacher Portal' : 'Dashboard'}
+                    </Link>
+                    <button 
+                      onClick={handleSignOut}
+                      className="text-lg font-medium text-left text-red-600"
+                    >
+                      Log Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/login" className="text-lg font-medium">
+                      Log In
+                    </Link>
+                    <Link href="/signup" className="text-lg font-medium">
+                      Sign Up
+                    </Link>
+                  </>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
