@@ -10,9 +10,13 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
+import emailjs from '@emailjs/browser'
+import { useRef } from 'react'
 
 export default function ContactPage() {
   const { toast } = useToast()
+  const formRef = useRef(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [formState, setFormState] = useState({
     firstName: "",
     lastName: "",
@@ -31,25 +35,57 @@ export default function ContactPage() {
     setFormState((prev) => ({ ...prev, subject: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Form submitted:", formState)
-
-    // Show success toast
-    toast({
-      title: "Message Sent",
-      description: "We've received your message and will get back to you soon.",
-    })
-
-    // Reset form
-    setFormState({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      subject: "",
-      message: "",
-    })
+    
+    if (!formRef.current) return
+    
+    try {
+      setIsSubmitting(true)
+      
+      // Replace these values with your actual EmailJS service ID, template ID, and public key
+      const serviceId = 'service_qzvdxxf'
+      const templateId = 'template_0rfu1fs'
+      const publicKey = 'w6XDGEC3E91pHZWLL'
+      
+      const templateParams = {
+        to_email: 'yanxidevtest@gmail.com',
+        from_name: `${formState.firstName} ${formState.lastName}`,
+        from_email: formState.email,
+        phone: formState.phone,
+        subject: formState.subject,
+        message: formState.message,
+      }
+      
+      await emailjs.send(serviceId, templateId, templateParams, publicKey)
+      
+      // Show success toast
+      toast({
+        title: "Message Sent",
+        description: "We've received your message and will get back to you soon.",
+      })
+      
+      // Reset form
+      setFormState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      })
+    } catch (error) {
+      console.error("Error sending email:", error)
+      
+      // Show error toast
+      toast({
+        title: "Error",
+        description: "There was a problem sending your message. Please try again later.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -72,7 +108,7 @@ export default function ContactPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">First Name</Label>
@@ -141,8 +177,12 @@ export default function ContactPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full bg-red-600 hover:bg-red-700">
-                    Send Message
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-red-600 hover:bg-red-700"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Sending..." : "Send Message"}
                   </Button>
                 </form>
               </CardContent>
@@ -183,14 +223,8 @@ export default function ContactPage() {
               <CardContent className="space-y-4">
                 <div>
                   <h3 className="font-semibold mb-2">General Inquiries</h3>
-                  <p className="text-gray-600">Email: info@chinesemath.edu</p>
-                  <p className="text-gray-600">Phone: (123) 456-7890</p>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold mb-2">Admissions</h3>
-                  <p className="text-gray-600">Email: admissions@chinesemath.edu</p>
-                  <p className="text-gray-600">Phone: (123) 456-7891</p>
+                  <p className="text-gray-600">Email: chenxuhong1212@icloud.com</p>
+                  <p className="text-gray-600">Phone: 858-261-8491</p>
                 </div>
 
                 <div>
