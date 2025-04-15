@@ -61,7 +61,7 @@ const ClientSideNavbar = () => {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <Link href="/courses" legacyBehavior passHref>
-                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>Resources</NavigationMenuLink>
+                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>Courses</NavigationMenuLink>
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
