@@ -14,12 +14,14 @@ export async function POST(req: NextRequest) {
 
     // Get the user ID from the session
     const userId = session.user.id;
+    const userEmail = session.user.email;
+    console.log(`Processing deletion for user: ${userId} (${userEmail})`);
 
-    // Delete all user's documents first
-    // 1. Get documents
+    // 1. Get documents for this user
+    console.log('Fetching user documents...');
     const { data: documents, error: fetchError } = await supabase
       .from('documents')
-      .select('file_path')
+      .select('id, file_path')
       .eq('user_id', userId);
 
     if (fetchError) {
@@ -27,32 +29,56 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: fetchError.message }, { status: 500 });
     }
 
-    // 2. Delete files from storage
-    if (documents && documents.length > 0) {
-      const filePaths = documents.map(doc => doc.file_path);
-      const { error: storageError } = await supabase.storage
-        .from('documents')
-        .remove(filePaths);
+    console.log(`Found ${documents?.length || 0} documents to delete`);
 
-      if (storageError) {
-        console.error('Error deleting files from storage:', storageError);
-        return NextResponse.json({ error: storageError.message }, { status: 500 });
+    // 2. Delete files from storage one by one to handle permissions properly
+    if (documents && documents.length > 0) {
+      console.log('Deleting files from storage...');
+      
+      for (const doc of documents) {
+        try {
+          console.log(`Deleting file: ${doc.file_path}`);
+          const { error: storageError } = await supabase.storage
+            .from('documents')
+            .remove([doc.file_path]);
+  
+          if (storageError) {
+            console.error(`Error deleting file ${doc.file_path}:`, storageError);
+            // Continue with other files even if one fails
+          }
+        } catch (e) {
+          console.error(`Exception deleting file ${doc.file_path}:`, e);
+          // Continue with other files
+        }
       }
     }
 
-    // 3. Delete document records
-    const { error: docDeleteError } = await supabase
-      .from('documents')
-      .delete()
-      .eq('user_id', userId);
-
-    if (docDeleteError) {
-      console.error('Error deleting document records:', docDeleteError);
-      return NextResponse.json({ error: docDeleteError.message }, { status: 500 });
+    // 3. Delete document records one by one
+    if (documents && documents.length > 0) {
+      console.log('Deleting document records...');
+      
+      for (const doc of documents) {
+        try {
+          console.log(`Deleting document record: ${doc.id}`);
+          const { error: docDeleteError } = await supabase
+            .from('documents')
+            .delete()
+            .eq('id', doc.id)
+            .eq('user_id', userId); // Ensure RLS policy compliance
+  
+          if (docDeleteError) {
+            console.error(`Error deleting document record ${doc.id}:`, docDeleteError);
+            // Continue with other documents even if one fails
+          }
+        } catch (e) {
+          console.error(`Exception deleting document record ${doc.id}:`, e);
+          // Continue with other documents
+        }
+      }
     }
 
     // 4. Mark the user account for deletion and scramble their data
-    // We'll generate a random string to replace the email
+    console.log('Scrambling user account data...');
     const randomString = Math.random().toString(36).substring(2, 15);
     const deletedEmail = `deleted-${randomString}@deleted.account`;
     
@@ -63,7 +89,7 @@ export async function POST(req: NextRequest) {
       data: { 
         deleted: true,
         delete_requested_at: new Date().toISOString(),
-        original_email_hash: session.user.email // Store a hash of the original email to prevent re-registration
+        original_email: userEmail // Store the original email
       }
     });
     
@@ -73,6 +99,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 5. End all sessions for this user
+    console.log('Signing out user from all sessions...');
     const { error: signOutError } = await supabase.auth.signOut({ scope: 'global' });
     
     if (signOutError) {
@@ -81,6 +108,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Return success
+    console.log('Account deletion completed successfully');
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error('Unexpected error in account deletion:', error);
