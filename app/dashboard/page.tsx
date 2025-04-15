@@ -35,8 +35,11 @@ export default function Dashboard() {
   // Debug data
   const [debugInfo, setDebugInfo] = useState<DebugInfo>({});
 
-  // Reset password state
-  const [isResetting, setIsResetting] = useState(false);
+  // Password change state
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   // Check if we have a valid session and user
   useEffect(() => {
@@ -287,28 +290,66 @@ export default function Dashboard() {
     }
   };
 
-  // Replace handleDeleteAccount with handleResetPassword
-  const handleResetPassword = async () => {
+  // Password change handler
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     if (!user?.email) {
       toast.error("Email not found. Please log out and log in again.");
       return;
     }
 
-    setIsResetting(true);
+    // Validate passwords
+    if (!oldPassword) {
+      toast.error("Please enter your current password.");
+      return;
+    }
+    
+    if (newPassword.length < 6) {
+      toast.error("New password must be at least 6 characters long.");
+      return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match.");
+      return;
+    }
+    
+    setIsChangingPassword(true);
     
     try {
-      const { error } = await useAuth().resetPassword(user.email);
+      // First verify the old password by signing in
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: oldPassword,
+      });
       
-      if (error) {
-        toast.error("Failed to send reset email: " + error.message);
+      if (signInError) {
+        toast.error("Current password is incorrect.");
+        setIsChangingPassword(false);
         return;
       }
       
-      toast.success("Password reset email sent! Please check your inbox.");
+      // If old password is correct, update to the new password
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+      
+      if (updateError) {
+        toast.error("Failed to update password: " + updateError.message);
+        return;
+      }
+      
+      // Clear password fields
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      
+      toast.success("Password updated successfully!");
     } catch (error: any) {
       toast.error("An unexpected error occurred: " + error.message);
     } finally {
-      setIsResetting(false);
+      setIsChangingPassword(false);
     }
   };
 
@@ -478,33 +519,73 @@ export default function Dashboard() {
             <h2 className="text-2xl font-semibold mb-4">Account Management</h2>
             <Card>
               <CardHeader>
-                <CardTitle className="text-blue-600">Reset Password</CardTitle>
+                <CardTitle className="text-blue-600">Change Password</CardTitle>
                 <CardDescription>
-                  Need to change your password? Reset it here.
+                  Update your password by entering your current password and choosing a new one.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                  We'll send a password reset link to your email address. Click the link in the email to create a new password.
-                </p>
-                <Button
-                  variant="outline"
-                  onClick={handleResetPassword}
-                  disabled={isResetting}
-                  className="w-full"
-                >
-                  {isResetting ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Sending Email...
-                    </>
-                  ) : (
-                    "Send Reset Link"
-                  )}
-                </Button>
+                <form onSubmit={handlePasswordChange} className="space-y-4">
+                  <div>
+                    <Label htmlFor="oldPassword">Current Password</Label>
+                    <Input
+                      id="oldPassword"
+                      type="password"
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      placeholder="Enter your current password"
+                      required
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="newPassword">New Password</Label>
+                    <Input
+                      id="newPassword"
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Enter your new password"
+                      required
+                      className="mt-1"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Password must be at least 6 characters long.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm your new password"
+                      required
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  <Button
+                    type="submit"
+                    disabled={isChangingPassword}
+                    className="w-full"
+                  >
+                    {isChangingPassword ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Updating Password...
+                      </>
+                    ) : (
+                      "Update Password"
+                    )}
+                  </Button>
+                </form>
               </CardContent>
             </Card>
           </div>
