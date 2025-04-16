@@ -41,7 +41,7 @@ const ClientSideNavbar = () => {
           />
           </Link>
 
-          <div className="hidden md:flex">
+          <div className="hidden md:flex ml-auto mr-[23rem]">
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
@@ -115,7 +115,7 @@ const ClientSideNavbar = () => {
               </Button>
             </SheetTrigger>
             <SheetContent side="right">
-              <nav className="flex flex-col gap-4">
+              <nav className="flex flex-col gap-5">
                 <Link href="/" className="text-lg font-medium">
                   Home
                 </Link>
