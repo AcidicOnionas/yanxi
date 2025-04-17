@@ -60,6 +60,33 @@ export default function TeacherPortal() {
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
+  // Helper function to consistently format user names
+  const getUserDisplayName = (userDoc: Document | null, email: string): string => {
+    // First try user_name from the document if it exists and is not empty
+    if (userDoc?.user_name && userDoc.user_name.trim() !== '') {
+      return userDoc.user_name;
+    }
+
+    // If we have an email, try to extract a name from it (assuming personal emails like john.doe@example.com)
+    if (email) {
+      // Get the part before @ and replace dots/underscores with spaces
+      const nameFromEmail = email.split('@')[0].replace(/[._]/g, ' ');
+      
+      // Capitalize each word
+      const formattedName = nameFromEmail
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      
+      if (formattedName && formattedName !== email) {
+        return formattedName;
+      }
+    }
+    
+    // Default fallback - consistent naming
+    return "Unknown User";
+  };
+
   // Check if we have a valid session and user
   useEffect(() => {
     if (!session) {
@@ -133,6 +160,11 @@ export default function TeacherPortal() {
             if (urlError) {
               console.error(`Error creating signed URL for ${doc.file_name}:`, urlError);
               return doc; // Return original document if we can't get a fresh URL
+            }
+            
+            // Ensure document has user_name
+            if (!doc.user_name) {
+              doc.user_name = getUserDisplayName(null, doc.user_email);
             }
             
             return { ...doc, url: urlData.signedUrl };
@@ -317,6 +349,12 @@ export default function TeacherPortal() {
         
       const fileUrl = urlData.publicUrl;
       
+      // Find the student's email
+      const studentEmail = students.find(s => s.id === selectedStudent)?.email || 'Unknown';
+      
+      // Generate a user name using our consistent function
+      const userName = getUserDisplayName(null, studentEmail);
+      
       // Store document metadata in the documents table
       const { error: dbError } = await supabase
         .from('documents')
@@ -328,7 +366,8 @@ export default function TeacherPortal() {
             file_size: fileToUpload.size,
             file_path: filePath,
             url: fileUrl,
-            user_email: students.find(s => s.id === selectedStudent)?.email || 'Unknown',
+            user_email: studentEmail,
+            user_name: userName,
             uploaded_by_teacher: true,
             teacher_email: user?.email
           }
@@ -353,10 +392,19 @@ export default function TeacherPortal() {
       if (error) {
         console.error('Error refreshing document list:', error);
       } else {
-        setAllDocuments(data || []);
+        // Process documents to ensure they all have user_name
+        const processedDocs = (data || []).map(doc => {
+          // If doc doesn't have user_name, generate it
+          if (!doc.user_name) {
+            doc.user_name = getUserDisplayName(doc, doc.user_email);
+          }
+          return doc;
+        });
+        
+        setAllDocuments(processedDocs);
         
         // Update studentData as well with the refreshed docs
-        const groupedByStudent = (data || []).reduce((acc, doc) => {
+        const groupedByStudent = processedDocs.reduce((acc, doc) => {
           if (!acc[doc.user_id]) {
             acc[doc.user_id] = {
               userId: doc.user_id,
@@ -447,7 +495,7 @@ export default function TeacherPortal() {
                   <SelectContent>
                     {students.map((student) => (
                       <SelectItem key={student.id} value={student.id}>
-                        {student.email}
+                        {getUserDisplayName(null, student.email)} ({student.email})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -524,7 +572,7 @@ export default function TeacherPortal() {
                         </div>
                         <div className="flex items-center gap-4">
                           <span className="text-sm text-gray-600 dark:text-gray-300">
-                            {doc.user_name || 'Unknown User'} ({doc.user_email})
+                            {getUserDisplayName(doc, doc.user_email)} ({doc.user_email})
                           </span>
                           <div className="flex items-center space-x-2">
                             <a 
@@ -567,7 +615,7 @@ export default function TeacherPortal() {
               {studentData.map((student) => (
                 <Card key={student.userId}>
                   <CardHeader>
-                    <CardTitle>{student.documents[0]?.user_name || 'Unknown'} ({student.email})</CardTitle>
+                    <CardTitle>{getUserDisplayName(student.documents[0], student.email)} ({student.email})</CardTitle>
                     <CardDescription>
                       {student.documents.length} document{student.documents.length !== 1 ? 's' : ''}
                     </CardDescription>
