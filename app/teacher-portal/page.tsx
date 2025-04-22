@@ -25,11 +25,15 @@ type Document = {
   url: string;
   user_email: string;
   user_name?: string;
+  uploaded_by_teacher?: boolean;
+  teacher_feedback?: boolean;
+  teacher_email?: string;
 };
 
 type Student = {
   userId: string;
   email: string;
+  displayName?: string;
   documents: Document[];
 };
 
@@ -52,7 +56,9 @@ export default function TeacherPortal() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [debugInfo, setDebugInfo] = useState<DebugInfo>({});
-  const [students, setStudents] = useState<{id: string, email: string}[]>([]);
+  const [students, setStudents] = useState<{id: string, email: string, displayName?: string}[]>([]);
+  const [uploadsFilter, setUploadsFilter] = useState<'all'|'student'|'teacher'>('all');
+  const [studentDocsFilter, setStudentDocsFilter] = useState<'all'|'student'|'teacher'>('all');
   
   // State for file upload to student
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
@@ -60,31 +66,14 @@ export default function TeacherPortal() {
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  // Helper function to consistently format user names
+  // Simple function to get display name
   const getUserDisplayName = (userDoc: Document | null, email: string): string => {
-    // First try user_name from the document if it exists and is not empty
-    if (userDoc?.user_name && userDoc.user_name.trim() !== '') {
+    // Use document's user_name if available
+    if (userDoc?.user_name) {
       return userDoc.user_name;
     }
-
-    // If we have an email, try to extract a name from it (assuming personal emails like john.doe@example.com)
-    if (email) {
-      // Get the part before @ and replace dots/underscores with spaces
-      const nameFromEmail = email.split('@')[0].replace(/[._]/g, ' ');
-      
-      // Capitalize each word
-      const formattedName = nameFromEmail
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-      
-      if (formattedName && formattedName !== email) {
-        return formattedName;
-      }
-    }
-    
-    // Default fallback - consistent naming
-    return "Unknown User";
+    // Otherwise just return the email
+    return email;
   };
 
   // Check if we have a valid session and user
@@ -162,9 +151,18 @@ export default function TeacherPortal() {
               return doc; // Return original document if we can't get a fresh URL
             }
             
-            // Ensure document has user_name
-            if (!doc.user_name) {
-              doc.user_name = getUserDisplayName(null, doc.user_email);
+            // Only set user_name for non-teacher uploads
+            if (!doc.uploaded_by_teacher && !doc.user_name) {
+              // Simple username extraction for student uploads only
+              if (doc.user_email) {
+                const username = doc.user_email.split('@')[0];
+                doc.user_name = username;
+              }
+            }
+            
+            // For teacher uploads, make sure user_name is explicitly null or undefined
+            if (doc.uploaded_by_teacher) {
+              doc.user_name = undefined;
             }
             
             return { ...doc, url: urlData.signedUrl };
@@ -209,35 +207,46 @@ export default function TeacherPortal() {
     fetchAllDocuments();
   }, [user, role, session]);
 
+  // Define fetchAllStudents outside the useEffect
+  const fetchAllStudents = async () => {
+    if (!user || role !== 'teacher' || !session) return;
+    
+    try {
+      // Query documents to get unique user_ids and emails
+      const { data, error } = await supabase
+        .from('documents')
+        .select('user_id, user_email, user_name')
+        .order('user_email');
+        
+      if (error) {
+        console.error('Error fetching students:', error);
+        return;
+      }
+      
+      // Use a map to collect student information with both email and displayName
+      const studentMap = new Map();
+      data.forEach(item => {
+        // If the student is not in the map yet or if this document has user_name and previous didn't
+        if (!studentMap.has(item.user_id) || (!studentMap.get(item.user_id).displayName && item.user_name)) {
+          studentMap.set(item.user_id, { 
+            id: item.user_id, 
+            email: item.user_email,
+            displayName: item.user_name || item.user_email.split('@')[0] // Fall back to email username if no name
+          });
+        }
+      });
+      
+      // Convert to array
+      const uniqueStudents = Array.from(studentMap.values());
+      
+      setStudents(uniqueStudents);
+    } catch (e) {
+      console.error('Error in fetchAllStudents:', e);
+    }
+  };
+
   // Add new effect to fetch all students
   useEffect(() => {
-    const fetchAllStudents = async () => {
-      if (!user || role !== 'teacher' || !session) return;
-      
-      try {
-        // Query documents to get unique user_ids and emails
-        const { data, error } = await supabase
-          .from('documents')
-          .select('user_id, user_email')
-          .order('user_email');
-          
-        if (error) {
-          console.error('Error fetching students:', error);
-          return;
-        }
-        
-        // Extract unique students
-        const uniqueStudents = Array.from(
-          new Map(data.map(item => [item.user_id, { id: item.user_id, email: item.user_email }]))
-            .values()
-        );
-        
-        setStudents(uniqueStudents);
-      } catch (e) {
-        console.error('Error in fetchAllStudents:', e);
-      }
-    };
-    
     fetchAllStudents();
   }, [user, role, session]);
 
@@ -312,6 +321,13 @@ export default function TeacherPortal() {
     }
   };
   
+  // Function to find and get student display name
+  const getStudentDisplayName = (studentId: string): string => {
+    const student = students.find(s => s.id === studentId);
+    if (!student) return "Unknown Student";
+    return student.displayName || student.email;
+  };
+
   // Add function to upload file to student folder
   const handleUploadToStudent = async () => {
     if (!fileToUpload || !selectedStudent) {
@@ -324,7 +340,9 @@ export default function TeacherPortal() {
     try {
       // Prepare the file upload path - use student's ID folder
       const fileExt = fileToUpload.name.split('.').pop();
-      const fileName = `teacher_feedback_${Date.now()}.${fileExt}`;
+      const timestamp = Date.now();
+      // Use a standard naming format for teacher uploads
+      const fileName = `teacher_feedback_${timestamp}.${fileExt}`;
       const filePath = `${selectedStudent}/${fileName}`;
       
       console.log('Uploading file to student folder:', filePath);
@@ -349,26 +367,30 @@ export default function TeacherPortal() {
         
       const fileUrl = urlData.publicUrl;
       
-      // Find the student's email
-      const studentEmail = students.find(s => s.id === selectedStudent)?.email || 'Unknown';
+      // Find the student's email and display name
+      const student = students.find(s => s.id === selectedStudent);
+      const studentEmail = student?.email || 'Unknown';
+      const studentDisplayName = student?.displayName || studentEmail.split('@')[0];
       
-      // Generate a user name using our consistent function
-      const userName = getUserDisplayName(null, studentEmail);
+      // Create a standardized file name to show in the UI for teacher feedback that includes student name
+      // Extract just the original file extension, not the whole filename
+      const displayFileName = `Feedback for ${studentDisplayName} (${new Date(timestamp).toLocaleDateString()}).${fileExt}`;
       
-      // Store document metadata in the documents table
+      // Store document metadata in the documents table - WITHOUT user_name field
       const { error: dbError } = await supabase
         .from('documents')
         .insert([
           {
             user_id: selectedStudent,
-            file_name: fileToUpload.name,
+            file_name: displayFileName,
             file_type: fileToUpload.type,
             file_size: fileToUpload.size,
             file_path: filePath,
             url: fileUrl,
             user_email: studentEmail,
-            user_name: userName,
+            // Explicitly NOT including user_name field for teacher uploads
             uploaded_by_teacher: true,
+            teacher_feedback: true,
             teacher_email: user?.email
           }
         ]);
@@ -383,7 +405,20 @@ export default function TeacherPortal() {
       setSelectedStudent("");
       setUploadDialogOpen(false);
       
-      // Refresh documents list
+      // Refresh the document list
+      refreshDocuments();
+      
+    } catch (error: any) {
+      console.error("Error uploading document to student folder:", error.message);
+      toast.error("Failed to upload document: " + error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+  
+  // Helper function to refresh document list
+  const refreshDocuments = async () => {
+    try {
       const { data, error } = await supabase
         .from('documents')
         .select('*')
@@ -391,39 +426,55 @@ export default function TeacherPortal() {
         
       if (error) {
         console.error('Error refreshing document list:', error);
-      } else {
-        // Process documents to ensure they all have user_name
-        const processedDocs = (data || []).map(doc => {
-          // If doc doesn't have user_name, generate it
-          if (!doc.user_name) {
-            doc.user_name = getUserDisplayName(doc, doc.user_email);
-          }
-          return doc;
-        });
-        
-        setAllDocuments(processedDocs);
-        
-        // Update studentData as well with the refreshed docs
-        const groupedByStudent = processedDocs.reduce((acc, doc) => {
-          if (!acc[doc.user_id]) {
-            acc[doc.user_id] = {
-              userId: doc.user_id,
-              email: doc.user_email,
-              documents: []
-            };
-          }
-          acc[doc.user_id].documents.push(doc);
-          return acc;
-        }, {} as Record<string, Student>);
-        
-        setStudentData(Object.values(groupedByStudent));
+        return;
       }
       
+      // Create fresh signed URLs for each document
+      const updatedDocs = await Promise.all((data || []).map(async (doc) => {
+        try {
+          const { data: urlData, error: urlError } = await supabase.storage
+            .from('documents')
+            .createSignedUrl(doc.file_path, 60 * 60 * 24 * 7);
+            
+          if (urlError) {
+            console.error(`Error creating signed URL for ${doc.file_name}:`, urlError);
+            return doc; // Return original document if we can't get a fresh URL
+          }
+          
+          return { ...doc, url: urlData.signedUrl };
+        } catch (e) {
+          console.error(`Error refreshing URL for ${doc.file_name}:`, e);
+          return doc;
+        }
+      }));
+      
+      setAllDocuments(updatedDocs);
+      
+      // Update studentData with the refreshed docs
+      const studentMap = new Map<string, Student>();
+      
+      updatedDocs.forEach(doc => {
+        if (!studentMap.has(doc.user_id)) {
+          // Look up student in existing students array to maintain display name
+          const existingStudent = students.find(s => s.id === doc.user_id);
+          
+          studentMap.set(doc.user_id, {
+            userId: doc.user_id,
+            email: doc.user_email,
+            displayName: existingStudent?.displayName || doc.user_name || doc.user_email.split('@')[0],
+            documents: []
+          });
+        }
+        
+        studentMap.get(doc.user_id)?.documents.push(doc);
+      });
+      
+      setStudentData(Array.from(studentMap.values()));
+      
+      // Also refresh the students list to ensure we have the latest display names
+      fetchAllStudents();
     } catch (error: any) {
-      console.error("Error uploading document to student folder:", error.message);
-      toast.error("Failed to upload document: " + error.message);
-    } finally {
-      setUploading(false);
+      console.error("Error refreshing documents:", error.message);
     }
   };
 
@@ -495,7 +546,7 @@ export default function TeacherPortal() {
                   <SelectContent>
                     {students.map((student) => (
                       <SelectItem key={student.id} value={student.id}>
-                        {getUserDisplayName(null, student.email)} ({student.email})
+                        {student.displayName ? `${student.displayName} (${student.email})` : student.email}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -542,10 +593,37 @@ export default function TeacherPortal() {
         <TabsContent value="all">
           <Card>
             <CardHeader>
-              <CardTitle>All Student Uploads</CardTitle>
-              <CardDescription>
-                View all documents uploaded by students in chronological order.
-              </CardDescription>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>All Uploads</CardTitle>
+                  <CardDescription>
+                    View all documents uploaded by students and teachers.
+                  </CardDescription>
+                </div>
+                <div className="flex space-x-2">
+                  <Button 
+                    variant={uploadsFilter === 'all' ? 'default' : 'outline'} 
+                    size="sm"
+                    onClick={() => setUploadsFilter('all')}
+                  >
+                    All
+                  </Button>
+                  <Button 
+                    variant={uploadsFilter === 'student' ? 'default' : 'outline'} 
+                    size="sm"
+                    onClick={() => setUploadsFilter('student')}
+                  >
+                    Student Uploads
+                  </Button>
+                  <Button 
+                    variant={uploadsFilter === 'teacher' ? 'default' : 'outline'} 
+                    size="sm"
+                    onClick={() => setUploadsFilter('teacher')}
+                  >
+                    Teacher Feedback
+                  </Button>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="max-h-[600px] overflow-y-auto">
               {loading ? (
@@ -558,43 +636,90 @@ export default function TeacherPortal() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {allDocuments.map((doc) => (
-                    <div 
-                      key={doc.id} 
-                      className="p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div className="truncate">
-                          <p className="font-medium truncate">{doc.file_name}</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {formatFileSize(doc.file_size)} • Uploaded {new Date(doc.created_at).toLocaleString()}
+                  {(() => {
+                    const filteredDocs = allDocuments.filter(doc => {
+                      if (uploadsFilter === 'all') return true;
+                      if (uploadsFilter === 'student') return !doc.uploaded_by_teacher;
+                      if (uploadsFilter === 'teacher') return doc.uploaded_by_teacher;
+                      return true;
+                    });
+                    
+                    if (filteredDocs.length === 0) {
+                      return (
+                        <div className="flex justify-center items-center h-40 text-center text-gray-500">
+                          <p>
+                            {uploadsFilter === 'student' && "No student uploads found."}
+                            {uploadsFilter === 'teacher' && "No teacher feedback found."}
+                            {uploadsFilter === 'all' && "No documents found."}
                           </p>
                         </div>
-                        <div className="flex items-center gap-4">
-                          <span className="text-sm text-gray-600 dark:text-gray-300">
-                            {getUserDisplayName(doc, doc.user_email)} ({doc.user_email})
-                          </span>
-                          <div className="flex items-center space-x-2">
-                            <a 
-                              href={doc.url} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-blue-600 hover:underline text-sm"
-                            >
-                              View
-                            </a>
-                            <button
-                              onClick={() => handleDeleteDocument(doc.id, doc.file_path)}
-                              className="text-red-600 hover:underline text-sm"
-                              aria-label="Delete document"
-                            >
-                              Delete
-                            </button>
+                      );
+                    }
+                    
+                    return filteredDocs.map((doc) => (
+                      <div 
+                        key={doc.id} 
+                        className={`p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
+                          doc.uploaded_by_teacher 
+                            ? 'border-blue-300 bg-blue-50 dark:bg-blue-900/20 border-l-4' 
+                            : ''
+                        }`}
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <div className="truncate">
+                            <p className="font-medium truncate flex items-center">
+                              {doc.uploaded_by_teacher && (
+                                <span className="mr-2 text-blue-600">📝</span>
+                              )}
+                              {doc.file_name}
+                              {doc.uploaded_by_teacher && (
+                                <span className="ml-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 text-xs px-2 py-0.5 rounded-full">
+                                  Teacher Feedback
+                                </span>
+                              )}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {formatFileSize(doc.file_size)} • Uploaded {new Date(doc.created_at).toLocaleString()}
+                              {doc.uploaded_by_teacher && doc.teacher_email && (
+                                <span className="ml-1">• By: {doc.teacher_email}</span>
+                              )}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <span className="text-sm text-gray-600 dark:text-gray-300">
+                              {doc.uploaded_by_teacher ? (
+                                <div className="flex flex-col">
+                                  <div>{getStudentDisplayName(doc.user_id)}</div>
+
+                                </div>
+                              ) : (
+                                <div>
+                                  {doc.user_name ? `${doc.user_name} (${doc.user_email})` : doc.user_email}
+                                </div>
+                              )}
+                            </span>
+                            <div className="flex items-center space-x-2">
+                              <a 
+                                href={doc.url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:underline text-sm"
+                              >
+                                View
+                              </a>
+                              <button
+                                onClick={() => handleDeleteDocument(doc.id, doc.file_path)}
+                                className="text-red-600 hover:underline text-sm"
+                                aria-label="Delete document"
+                              >
+                                Delete
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ));
+                  })()}
                 </div>
               )}
             </CardContent>
@@ -602,6 +727,32 @@ export default function TeacherPortal() {
         </TabsContent>
         
         <TabsContent value="by-student">
+          <div className="mb-4 flex justify-end">
+            <div className="flex space-x-2">
+              <Button 
+                variant={studentDocsFilter === 'all' ? 'default' : 'outline'} 
+                size="sm"
+                onClick={() => setStudentDocsFilter('all')}
+              >
+                All Documents
+              </Button>
+              <Button 
+                variant={studentDocsFilter === 'student' ? 'default' : 'outline'} 
+                size="sm"
+                onClick={() => setStudentDocsFilter('student')}
+              >
+                Student Uploads
+              </Button>
+              <Button 
+                variant={studentDocsFilter === 'teacher' ? 'default' : 'outline'} 
+                size="sm"
+                onClick={() => setStudentDocsFilter('teacher')}
+              >
+                Teacher Feedback
+              </Button>
+            </div>
+          </div>
+          
           {loading ? (
             <div className="flex justify-center items-center h-40">
               <p>Loading student data...</p>
@@ -612,56 +763,105 @@ export default function TeacherPortal() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6">
-              {studentData.map((student) => (
-                <Card key={student.userId}>
-                  <CardHeader>
-                    <CardTitle>{getUserDisplayName(student.documents[0], student.email)} ({student.email})</CardTitle>
-                    <CardDescription>
-                      {student.documents.length} document{student.documents.length !== 1 ? 's' : ''}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="max-h-[400px] overflow-y-auto">
-                    {student.documents.length === 0 ? (
-                      <p className="text-center text-gray-500">No documents uploaded.</p>
-                    ) : (
-                      <div className="space-y-3">
-                        {student.documents.map((doc) => (
-                          <div 
-                            key={doc.id} 
-                            className="p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="truncate flex-1">
-                                <p className="font-medium truncate">{doc.file_name}</p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                  {formatFileSize(doc.file_size)} • {new Date(doc.created_at).toLocaleString()}
-                                </p>
+              {studentData.map((student) => {
+                // Find a student-uploaded document (not teacher feedback)
+                const studentOwnDoc = student.documents.find(doc => !doc.uploaded_by_teacher);
+                // Get student display name using the helper function or directly from studentData
+                const studentDisplayName = getStudentDisplayName(student.userId);
+                
+                return (
+                  <Card key={student.userId}>
+                    <CardHeader>
+                      <CardTitle>
+                        {studentDisplayName !== student.email 
+                          ? `${studentDisplayName} (${student.email})`
+                          : student.email}
+                      </CardTitle>
+                      <CardDescription>
+                        {student.documents.length} document{student.documents.length !== 1 ? 's' : ''}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="max-h-[400px] overflow-y-auto">
+                      {student.documents.length === 0 ? (
+                        <p className="text-center text-gray-500">No documents uploaded.</p>
+                      ) : (
+                        <div className="space-y-3">
+                          {(() => {
+                            const filteredDocs = student.documents.filter(doc => {
+                              if (studentDocsFilter === 'all') return true;
+                              if (studentDocsFilter === 'student') return !doc.uploaded_by_teacher;
+                              if (studentDocsFilter === 'teacher') return doc.uploaded_by_teacher;
+                              return true;
+                            });
+                            
+                            if (filteredDocs.length === 0) {
+                              return (
+                                <div className="text-center text-gray-500 py-4">
+                                  <p>
+                                    {studentDocsFilter === 'student' && "No student uploads found."}
+                                    {studentDocsFilter === 'teacher' && "No teacher feedback found for this student."}
+                                    {studentDocsFilter === 'all' && "No documents found."}
+                                  </p>
+                                </div>
+                              );
+                            }
+                            
+                            return filteredDocs.map((doc) => (
+                              <div 
+                                key={doc.id} 
+                                className={`p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
+                                  doc.uploaded_by_teacher 
+                                    ? 'border-blue-300 bg-blue-50 dark:bg-blue-900/20 border-l-4' 
+                                    : ''
+                                }`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="truncate flex-1">
+                                    <p className="font-medium truncate flex items-center">
+                                      {doc.uploaded_by_teacher && (
+                                        <span className="mr-2 text-blue-600">📝</span>
+                                      )}
+                                      {doc.file_name}
+                                      {doc.uploaded_by_teacher && (
+                                        <span className="ml-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 text-xs px-2 py-0.5 rounded-full">
+                                          Teacher Feedback
+                                        </span>
+                                      )}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                      {formatFileSize(doc.file_size)} • {new Date(doc.created_at).toLocaleString()}
+                                      {doc.uploaded_by_teacher && doc.teacher_email && (
+                                        <span className="ml-1">• Uploaded by: {doc.teacher_email}</span>
+                                      )}
+                                    </p>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <a 
+                                      href={doc.url} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="ml-2 text-blue-600 hover:underline text-sm"
+                                    >
+                                      View
+                                    </a>
+                                    <button
+                                      onClick={() => handleDeleteDocument(doc.id, doc.file_path)}
+                                      className="ml-2 text-red-600 hover:underline text-sm"
+                                      aria-label="Delete document"
+                                    >
+                                      Delete
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="flex items-center space-x-2">
-                                <a 
-                                  href={doc.url} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="ml-2 text-blue-600 hover:underline text-sm"
-                                >
-                                  View
-                                </a>
-                                <button
-                                  onClick={() => handleDeleteDocument(doc.id, doc.file_path)}
-                                  className="ml-2 text-red-600 hover:underline text-sm"
-                                  aria-label="Delete document"
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
+                            ));
+                          })()}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </TabsContent>

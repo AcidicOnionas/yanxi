@@ -216,7 +216,9 @@ export default function Dashboard() {
             file_path: filePath,
             url: fileUrl,
             user_email: user.email,
-            user_name: user.user_metadata?.full_name || 'Unknown User'
+            user_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Unknown User',
+            uploaded_by_teacher: false,
+            teacher_feedback: false
           }
         ]);
         
@@ -471,20 +473,30 @@ export default function Dashboard() {
                     {documents.map((doc) => (
                       <div 
                         key={doc.id} 
-                        className={`p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${doc.uploaded_by_teacher ? 'border-blue-300 bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                        className={`p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
+                          doc.uploaded_by_teacher 
+                            ? 'border-blue-300 border-l-4 bg-blue-50 dark:bg-blue-900/20' 
+                            : ''
+                        }`}
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                           <div className="truncate">
                             <div className="flex items-center gap-1">
+                              {doc.uploaded_by_teacher && (
+                                <span className="mr-1 text-blue-600">📝</span>
+                              )}
                               <p className="font-medium truncate">{doc.file_name}</p>
                               {doc.uploaded_by_teacher && (
-                                <span className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 text-xs px-2 py-0.5 rounded-full">
+                                <span className="ml-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 text-xs px-2 py-0.5 rounded-full">
                                   Teacher Feedback
                                 </span>
                               )}
                             </div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
                               {new Date(doc.created_at).toLocaleString()}
+                              {doc.uploaded_by_teacher && doc.teacher_email && (
+                                <span className="ml-1">• From: {doc.teacher_email}</span>
+                              )}
                             </p>
                           </div>
                           
