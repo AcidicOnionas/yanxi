@@ -216,7 +216,9 @@ export default function Dashboard() {
             file_path: filePath,
             url: fileUrl,
             user_email: user.email,
-            user_name: user.user_metadata?.full_name || 'Unknown User'
+            user_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Unknown User',
+            uploaded_by_teacher: false,
+            teacher_feedback: false
           }
         ]);
         
