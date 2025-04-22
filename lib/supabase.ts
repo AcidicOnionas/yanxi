@@ -6,8 +6,8 @@ const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Database table and field names for roles
+// Teacher account hardcoded credentials (not stored in the database)
 export const TEACHER_CREDENTIALS = {
   email: 'chriscao0329@gmail.com',
   password: 'teacherPassword123',
-}
+}; 
