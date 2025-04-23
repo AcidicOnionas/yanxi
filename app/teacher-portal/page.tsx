@@ -548,37 +548,7 @@ export default function TeacherPortal() {
       </p>
       
       {/* Debug info section */}
-      <Card className="mb-6 border-yellow-500">
-        <CardHeader>
-          <CardTitle className="text-yellow-600">Debug Info</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-sm space-y-1">
-            <p><strong>User ID:</strong> {user?.id}</p>
-            <p><strong>User Email:</strong> {user?.email}</p>
-            <p><strong>Role from Auth Context:</strong> {role}</p>
-            <p><strong>Role Check Status:</strong> {role === 'teacher' ? 'Role check passed ✅' : 'Role check failed ❌'}</p>
-          </div>
-          <div className="mt-4">
-            <Button variant="outline" size="sm" onClick={async () => {
-              // Re-check role directly from database
-              try {
-                const { data } = await supabase
-                  .from('user_roles')
-                  .select('role')
-                  .eq('user_id', user?.id)
-                  .single();
-                
-                toast.info(`Database role check: ${data?.role || 'No role found'}`);
-              } catch (error) {
-                toast.error("Failed to check role in database");
-              }
-            }}>
-              Verify Database Role
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      
       
       {/* Add Upload to Student button */}
       <div className="mb-6">
