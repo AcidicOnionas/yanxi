@@ -371,8 +371,11 @@ export default function TeacherPortal() {
       // Prepare the file upload path - use student's ID folder
       const fileExt = fileToUpload.name.split('.').pop();
       const timestamp = Date.now();
-      // Use a standard naming format for teacher uploads
-      const fileName = `teacher_feedback_${timestamp}.${fileExt}`;
+      
+      // Check if file with the same name exists to avoid overwrites, but preserve original name
+      // We add a timestamp only in the storage path, not in the displayed filename
+      const baseName = fileToUpload.name.substring(0, fileToUpload.name.lastIndexOf('.'));
+      const fileName = `${baseName}_${timestamp}.${fileExt}`;
       const filePath = `${selectedStudent}/${fileName}`;
       
       console.log('Uploading file to student folder:', filePath);
@@ -402,9 +405,8 @@ export default function TeacherPortal() {
       const studentEmail = student?.email || 'Unknown';
       const studentDisplayName = student?.displayName || studentEmail.split('@')[0];
       
-      // Create a standardized file name to show in the UI for teacher feedback that includes student name
-      // Extract just the original file extension, not the whole filename
-      const displayFileName = `Feedback for ${studentDisplayName} (${new Date(timestamp).toLocaleDateString()}).${fileExt}`;
+      // Use the original file name instead of creating a standardized one
+      const displayFileName = fileToUpload.name;
       
       // Store document metadata in the documents table - WITHOUT user_name field
       const { error: dbError } = await supabase
