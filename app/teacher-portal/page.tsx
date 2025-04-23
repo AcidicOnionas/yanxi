@@ -45,6 +45,8 @@ interface DebugInfo {
   userEmail?: string;
   role?: string | null;
   documentsFound?: number;
+  databaseRole?: string | null;
+  roleCheckError?: string | null;
   [key: string]: any; // Allow additional properties
 }
 
@@ -98,6 +100,34 @@ export default function TeacherPortal() {
       userEmail: user?.email,
       role,
     });
+
+    // Direct role check from database to help with debugging
+    const checkRoleDirectly = async () => {
+      try {
+        // Check if this user has a teacher role set in the database
+        const { data, error } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .single();
+        
+        setDebugInfo(prev => ({
+          ...prev,
+          databaseRole: data?.role || 'not found',
+          roleCheckError: error?.message || null
+        }));
+        
+        // If user should be a teacher but isn't in auth context, force refresh
+        if (data?.role === 'teacher' && role !== 'teacher') {
+          console.log('User should be teacher but context says otherwise, reloading...');
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error('Error checking role directly:', error);
+      }
+    };
+    
+    checkRoleDirectly();
 
     // Redirect students to dashboard
     if (user && role === 'student') {
@@ -390,7 +420,6 @@ export default function TeacherPortal() {
             user_email: studentEmail,
             // Explicitly NOT including user_name field for teacher uploads
             uploaded_by_teacher: true,
-            teacher_feedback: true,
             teacher_email: user?.email
           }
         ]);
@@ -517,6 +546,39 @@ export default function TeacherPortal() {
       <p className="text-gray-600 dark:text-gray-400 mb-6">
         Manage student documents and provide feedback.
       </p>
+      
+      {/* Debug info section */}
+      <Card className="mb-6 border-yellow-500">
+        <CardHeader>
+          <CardTitle className="text-yellow-600">Debug Info</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-sm space-y-1">
+            <p><strong>User ID:</strong> {user?.id}</p>
+            <p><strong>User Email:</strong> {user?.email}</p>
+            <p><strong>Role from Auth Context:</strong> {role}</p>
+            <p><strong>Role Check Status:</strong> {role === 'teacher' ? 'Role check passed ✅' : 'Role check failed ❌'}</p>
+          </div>
+          <div className="mt-4">
+            <Button variant="outline" size="sm" onClick={async () => {
+              // Re-check role directly from database
+              try {
+                const { data } = await supabase
+                  .from('user_roles')
+                  .select('role')
+                  .eq('user_id', user?.id)
+                  .single();
+                
+                toast.info(`Database role check: ${data?.role || 'No role found'}`);
+              } catch (error) {
+                toast.error("Failed to check role in database");
+              }
+            }}>
+              Verify Database Role
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
       
       {/* Add Upload to Student button */}
       <div className="mb-6">
