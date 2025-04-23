@@ -99,6 +99,9 @@ export default function ForgotPasswordPage() {
               <p className="text-center text-green-700 dark:text-green-300">
                 We've sent an email to <strong>{email}</strong> with instructions to reset your password.
               </p>
+              <p className="text-center text-sm text-green-700 dark:text-green-300">
+                Please give up to 5 minutes for the email to arrive.
+              </p>
             </div>
             
             <Button
